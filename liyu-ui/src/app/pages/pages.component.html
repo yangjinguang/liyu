@@ -1,0 +1,14 @@
+<nz-layout class="app-body">
+    <div class="app-nav">
+        <app-nav></app-nav>
+    </div>
+    <div class="app-content">
+        <div class="app-left-nav" [ngStyle]="{'width': sideNavCollapsed?'80px':'200px'}">
+            <app-side-nav></app-side-nav>
+        </div>
+        <div class="app-right-body">
+            <router-outlet></router-outlet>
+        </div>
+    </div>
+</nz-layout>
+
