@@ -7,19 +7,23 @@ import org.jooq.types.ULong;
 import java.util.List;
 
 public interface ContactService {
-    Integer countByTenantId(String tenantId);
+    Integer countByTenantId(String tenantId, String searchText);
 
-    List<Contact> listByTenantId(String tenantId, Integer offset, Integer size);
+    List<Contact> listByTenantId(String tenantId, Integer offset, Integer size, String searchText);
 
     Contact create(Contact newContact, String accountId, String tenantId);
 
-    Contact update(ULong id, Contact newContact);
+    Contact update(String contactId, Contact newContact);
 
     List<Contact> getByAccountId(String accountId);
 
     Contact getByAccountIdAndTenantId(String accountId, String tenantId);
 
     Contact getById(ULong id);
+
+    Integer countByOrganizationId(String organizationId);
+
+    List<Contact> getByOrganizationId(String organizationId);
 
     void bindOrganization(String contactId, String organizationId);
 

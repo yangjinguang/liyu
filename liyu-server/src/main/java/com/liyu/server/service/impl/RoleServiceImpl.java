@@ -31,23 +31,31 @@ public class RoleServiceImpl implements RoleService {
     }
 
     @Override
-    public List<Role> list(Integer offset, Integer size) {
+    public List<Role> list() {
         return context.selectFrom(ROLE)
-                .offset(offset)
-                .limit(size)
                 .fetch().into(Role.class);
     }
 
     @Override
     public Role create(Role newRole) {
+        String roleId = newRole.getRoleId();
+        if (roleId == null || roleId.isEmpty()) {
+            roleId = CommonUtils.UUIDGenerator();
+        }
         return context.insertInto(ROLE).columns(
                 ROLE.ROLE_ID,
                 ROLE.NAME,
-                ROLE.TENANT_ID
+                ROLE.DESCRIPTION,
+                ROLE.TENANT_ID,
+                ROLE.ENABLED,
+                ROLE.LOCKED
         ).values(
-                CommonUtils.UUIDGenerator(),
+                roleId,
                 newRole.getName(),
-                newRole.getTenantId()
+                newRole.getDescription(),
+                newRole.getTenantId(),
+                true,
+                newRole.getLocked()
         ).returning().fetchOne().into(Role.class);
     }
 

@@ -1,0 +1,36 @@
+<div class="personnel-organization common-list">
+    <!--<div class="common-list-filter"></div>-->
+    <div class="common-list-header">
+        <button nz-button [nzType]="'primary'"
+                (click)="organizationCreateModalOpen()">
+            <i class="anticon anticon-plus"></i>
+            新建班级
+        </button>
+    </div>
+    <div class="common-list-table">
+        <nz-table #basicTable [nzData]="organizations">
+            <thead>
+            <tr>
+                <th>班级</th>
+                <th>年级</th>
+                <th>教师</th>
+                <th>幼儿人数</th>
+                <th>操作</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr *ngFor="let data of basicTable.data">
+                <td>{{data.name}}</td>
+                <td>{{data.gradeName}}</td>
+                <td>{{data.contactNameTitle}}</td>
+                <td>{{data.studentCount}}</td>
+                <td>
+                    <a (click)="organizationCreateModalOpen(data)">编辑</a>
+                    <nz-divider nzType="vertical"></nz-divider>
+                    <a>删除</a>
+                </td>
+            </tr>
+            </tbody>
+        </nz-table>
+    </div>
+</div>

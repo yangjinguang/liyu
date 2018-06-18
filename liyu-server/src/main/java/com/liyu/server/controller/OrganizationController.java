@@ -1,7 +1,10 @@
 package com.liyu.server.controller;
 
+import com.liyu.server.model.OrganizationCreateBody;
 import com.liyu.server.model.OrganizationDetail;
+import com.liyu.server.model.OrganizationExtend;
 import com.liyu.server.service.AccountService;
+import com.liyu.server.service.ContactService;
 import com.liyu.server.service.OrganizationService;
 import com.liyu.server.tables.pojos.Contact;
 import com.liyu.server.tables.pojos.Organization;
@@ -15,6 +18,7 @@ import org.jooq.types.ULong;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
+import java.util.ArrayList;
 import java.util.List;
 
 @Slf4j
@@ -24,6 +28,8 @@ import java.util.List;
 public class OrganizationController {
     @Resource
     private OrganizationService organizationService;
+    @Resource
+    private ContactService contactService;
 
     @ApiOperation(value = "获取组织列表", notes = "")
     @ApiImplicitParams({
@@ -32,11 +38,27 @@ public class OrganizationController {
     })
     @RequestMapping(value = "", method = RequestMethod.GET)
     public APIResponse list(@RequestHeader(value = "X-TENANT-ID") String tenantId,
-                            @RequestParam(value = "page", required = false) Integer page,
-                            @RequestParam(value = "size", required = false) Integer size) {
+                            @RequestParam(value = "page", required = false, defaultValue = "1") Integer page,
+                            @RequestParam(value = "size", required = false, defaultValue = "20") Integer size) {
         log.info("tenantId: " + tenantId);
-        List<OrganizationDetail> organizationDetails = organizationService.listByTenantId(tenantId);
-        return APIResponse.success(organizationDetails);
+        Integer total = organizationService.countByTenantId(tenantId);
+        List<OrganizationExtend> organizationExtends = organizationService.listByTenantId(tenantId, (page - 1) * size, size);
+        ArrayList<OrganizationDetail> organizationDetails = new ArrayList<>();
+        for (OrganizationExtend organizationExtend : organizationExtends) {
+            OrganizationDetail organizationDetail = new OrganizationDetail(organizationExtend);
+            List<Contact> contacts = organizationService.contacts(organizationExtend.getOrganizationId());
+            organizationDetail.setContacts(contacts);
+            ArrayList<String> contactIds = new ArrayList<>();
+            ArrayList<String> contactNames = new ArrayList<>();
+            for (Contact contact : contacts) {
+                contactIds.add(contact.getContactId());
+                contactNames.add(contact.getName());
+            }
+            organizationDetail.setContactNameTitle(String.join(",", contactNames));
+            organizationDetail.setContactIds(contactIds);
+            organizationDetails.add(organizationDetail);
+        }
+        return APIResponse.withPagination(organizationDetails, total, page, size);
     }
 
     @ApiOperation(value = "获取组织详情", notes = "")
@@ -48,25 +70,26 @@ public class OrganizationController {
     }
 
     @ApiOperation(value = "创建组织", notes = "")
-    @ApiImplicitParam(name = "newOrganization", value = "组织详情", required = true, dataType = "Organization", paramType = "body")
     @RequestMapping(value = "", method = RequestMethod.POST)
     public APIResponse create(@RequestHeader(value = "X-TENANT-ID") String tenantId,
-                              @RequestBody Organization newOrganization) {
+                              @RequestBody OrganizationCreateBody newOrganization) {
         newOrganization.setTenantId(tenantId);
         Organization organization = organizationService.create(newOrganization);
+        organizationService.bindContacts(organization.getOrganizationId(), newOrganization.getContactIds());
         return APIResponse.success(organization);
     }
 
 
     @ApiOperation(value = "更新组织", notes = "")
-    @ApiImplicitParams({
-            @ApiImplicitParam(name = "id", value = "ID", required = true, dataType = "Long", paramType = "path"),
-            @ApiImplicitParam(name = "newOrganization", value = "组织详情", required = true, dataType = "Organization", paramType = "body")
-    })
-    @RequestMapping(value = "/{id}", method = RequestMethod.PUT)
-    public APIResponse create(@PathVariable Long id,
-                              @RequestBody Organization newOrganization) {
-        Organization organization = organizationService.update(ULong.valueOf(id), newOrganization);
+    @RequestMapping(value = "/{organizationId}", method = RequestMethod.PUT)
+    public APIResponse update(@PathVariable String organizationId,
+                              @RequestBody OrganizationCreateBody newOrganization) {
+        Organization organization = organizationService.update(organizationId, newOrganization);
+        List<String> contactIds = newOrganization.getContactIds();
+        if (contactIds != null && contactIds.size() > 0) {
+            organizationService.clearContact(organizationId);
+            organizationService.bindContacts(organizationId, contactIds);
+        }
         return APIResponse.success(organization);
     }
 
@@ -78,21 +101,21 @@ public class OrganizationController {
         return APIResponse.success("success");
     }
 
-    @ApiOperation(value = "绑定联系人", notes = "")
-    @ApiImplicitParams({
-            @ApiImplicitParam(name = "id", value = "ID", required = true, dataType = "Long", paramType = "path"),
-            @ApiImplicitParam(name = "accountIds", value = "用户ID列表", required = true, dataType = "List<String>", paramType = "body"),
-    })
-    @RequestMapping(value = "/{id}/bindAccounts", method = RequestMethod.PUT)
-    public APIResponse bindAccounts(@PathVariable Long id,
-                                    @RequestBody List<String> accountIds) {
-        Organization organization = organizationService.byId(ULong.valueOf(id));
-        for (String accountId : accountIds) {
-            log.info("bind accountId: " + accountId);
-            organizationService.bindContact(organization.getOrganizationId(), accountId);
-        }
-        return APIResponse.success("success");
-    }
+//    @ApiOperation(value = "绑定联系人", notes = "")
+//    @ApiImplicitParams({
+//            @ApiImplicitParam(name = "id", value = "ID", required = true, dataType = "Long", paramType = "path"),
+//            @ApiImplicitParam(name = "accountIds", value = "用户ID列表", required = true, dataType = "List<String>", paramType = "body"),
+//    })
+//    @RequestMapping(value = "/{id}/bindAccounts", method = RequestMethod.PUT)
+//    public APIResponse bindAccounts(@PathVariable Long id,
+//                                    @RequestBody List<String> accountIds) {
+//        Organization organization = organizationService.byId(ULong.valueOf(id));
+//        for (String accountId : accountIds) {
+//            log.info("bind accountId: " + accountId);
+//            organizationService.bindContact(organization.getOrganizationId(), accountId);
+//        }
+//        return APIResponse.success("success");
+//    }
 
     @ApiOperation(value = "取消绑定联系人", notes = "")
     @ApiImplicitParams({
@@ -123,9 +146,7 @@ public class OrganizationController {
                             @RequestParam(value = "page", required = false, defaultValue = "1") Integer page,
                             @RequestParam(value = "size", required = false, defaultValue = "20") Integer size) {
         Organization organization = organizationService.byId(ULong.valueOf(id));
-        List<Contact> contacts;
-        Integer total = organizationService.contactsCount(organization.getOrganizationId());
-        contacts = organizationService.contacts(organization.getOrganizationId(), (page - 1) * size, size);
-        return APIResponse.withPagination(contacts, total, page, size);
+        List<Contact> contacts = organizationService.contacts(organization.getOrganizationId());
+        return APIResponse.success(contacts);
     }
 }

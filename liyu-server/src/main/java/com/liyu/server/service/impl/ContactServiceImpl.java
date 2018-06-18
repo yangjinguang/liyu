@@ -1,18 +1,20 @@
 package com.liyu.server.service.impl;
 
 import com.liyu.server.enums.ContactStatusEnum;
-import com.liyu.server.enums.ContactTypeEnum;
+import com.liyu.server.enums.GenderEnum;
 import com.liyu.server.service.ContactService;
 import com.liyu.server.tables.pojos.Contact;
 import com.liyu.server.tables.records.ContactRecord;
 import com.liyu.server.utils.CommonUtils;
+import org.jooq.Condition;
 import org.jooq.DSLContext;
 import org.jooq.exception.NoDataFoundException;
+import org.jooq.impl.DSL;
 import org.jooq.types.ULong;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
-
+import java.util.HashSet;
 import java.util.List;
 
 import static com.liyu.server.tables.Contact.CONTACT;
@@ -24,13 +26,30 @@ public class ContactServiceImpl implements ContactService {
     private DSLContext context;
 
     @Override
-    public Integer countByTenantId(String tenantId) {
-        return context.selectCount().from(CONTACT).where(CONTACT.TENANT_ID.eq(tenantId)).fetchOne().into(int.class);
+    public Integer countByTenantId(String tenantId, String searchText) {
+        HashSet<Condition> conditions = new HashSet<>();
+        conditions.add(CONTACT.TENANT_ID.eq(tenantId));
+        if (searchText != null && !searchText.isEmpty()) {
+            conditions.add(CONTACT.NAME.like("%" + searchText + "%").or(CONTACT.EMAIL.like("%" + searchText + "%").or(CONTACT.PHONE.like("%" + searchText + "%"))));
+        }
+        return context.selectCount().from(CONTACT)
+                .where(conditions)
+                .fetchOne()
+                .into(int.class);
+
     }
 
     @Override
-    public List<Contact> listByTenantId(String tenantId, Integer offset, Integer size) {
-        return context.selectFrom(CONTACT).where(CONTACT.TENANT_ID.eq(tenantId)).fetch().into(Contact.class);
+    public List<Contact> listByTenantId(String tenantId, Integer offset, Integer size, String searchText) {
+        HashSet<Condition> conditions = new HashSet<>();
+        conditions.add(CONTACT.TENANT_ID.eq(tenantId));
+        if (searchText != null && !searchText.isEmpty()) {
+            conditions.add(CONTACT.NAME.like("%" + searchText + "%").or(CONTACT.EMAIL.like("%" + searchText + "%").or(CONTACT.PHONE.like("%" + searchText + "%"))));
+        }
+        return context.selectFrom(CONTACT)
+                .where(conditions)
+                .fetch()
+                .into(Contact.class);
     }
 
     @Override
@@ -40,30 +59,36 @@ public class ContactServiceImpl implements ContactService {
                 CONTACT.ACCOUNT_ID,
                 CONTACT.TENANT_ID,
                 CONTACT.NAME,
+                CONTACT.GENDER,
                 CONTACT.AVATAR,
                 CONTACT.PHONE,
                 CONTACT.EMAIL,
-                CONTACT.CONTACT_TYPE
+                CONTACT.ROLE_ID
         ).values(
                 CommonUtils.UUIDGenerator(),
                 accountId,
                 tenantId,
                 newContact.getName(),
+                newContact.getGender(),
                 newContact.getAvatar(),
                 newContact.getPhone(),
                 newContact.getEmail(),
-                newContact.getContactType()
+                newContact.getRoleId()
         ).returning().fetchOne().into(Contact.class);
     }
 
     @Override
-    public Contact update(ULong id, Contact newContact) {
-        ContactRecord contactRecord = context.selectFrom(CONTACT).where(CONTACT.ID.eq(id))
+    public Contact update(String contactId, Contact newContact) {
+        ContactRecord contactRecord = context.selectFrom(CONTACT).where(CONTACT.CONTACT_ID.eq(contactId))
                 .fetchOptional()
                 .orElseThrow(() -> new NoDataFoundException("联系人不存在"));
         String name = newContact.getName();
         if (name != null && !name.isEmpty()) {
             contactRecord.setName(name);
+        }
+        GenderEnum gender = newContact.getGender();
+        if (gender != null) {
+            contactRecord.setGender(gender);
         }
         String avatar = newContact.getAvatar();
         if (avatar != null && !avatar.isEmpty()) {
@@ -77,10 +102,11 @@ public class ContactServiceImpl implements ContactService {
         if (email != null && !email.isEmpty()) {
             contactRecord.setEmail(email);
         }
-        ContactTypeEnum contactType = newContact.getContactType();
-        if (contactType != null) {
-            contactRecord.setContactType(contactType);
+        String roleId = newContact.getRoleId();
+        if (roleId != null && !roleId.isEmpty()) {
+            contactRecord.setRoleId(roleId);
         }
+        contactRecord.update();
         return contactRecord.into(Contact.class);
     }
 
@@ -103,6 +129,26 @@ public class ContactServiceImpl implements ContactService {
                 .where(CONTACT.ID.eq(id))
                 .fetchOptional()
                 .orElseThrow(() -> new NoDataFoundException("未找到此联系人"))
+                .into(Contact.class);
+    }
+
+    @Override
+    public Integer countByOrganizationId(String organizationId) {
+        return context.selectCount().from(ORGANIZATION_CONTACT)
+                .leftJoin(CONTACT)
+                .on(CONTACT.CONTACT_ID.eq(ORGANIZATION_CONTACT.CONTACT_ID))
+                .where(ORGANIZATION_CONTACT.ORGANIZATION_ID.eq(organizationId), CONTACT.STATUS.notEqual(ContactStatusEnum.DELETED))
+                .fetchOne()
+                .into(int.class);
+    }
+
+    @Override
+    public List<Contact> getByOrganizationId(String organizationId) {
+        return context.select(CONTACT.fields()).from(ORGANIZATION_CONTACT)
+                .leftJoin(CONTACT)
+                .on(CONTACT.CONTACT_ID.eq(ORGANIZATION_CONTACT.CONTACT_ID))
+                .where(ORGANIZATION_CONTACT.ORGANIZATION_ID.eq(organizationId), CONTACT.STATUS.notEqual(ContactStatusEnum.DELETED))
+                .fetch()
                 .into(Contact.class);
     }
 

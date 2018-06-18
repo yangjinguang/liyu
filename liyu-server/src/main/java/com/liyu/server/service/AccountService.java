@@ -67,6 +67,8 @@ public interface AccountService {
      */
     Account getById(ULong id);
 
+    Account getByPhone(String phone);
+
     /**
      * 创建新账户
      *
@@ -78,11 +80,11 @@ public interface AccountService {
     /**
      * 更新账户信息
      *
-     * @param id         账户ID
+     * @param accountId  账户ID
      * @param newAccount 账户数据
      * @return Account
      */
-    Account update(ULong id, Account newAccount);
+    Account update(String accountId, Account newAccount);
 
     /**
      * 删除帐号

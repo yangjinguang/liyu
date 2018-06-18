@@ -10,6 +10,7 @@ export const environment = {
     contactApi: '/api/contacts',
     tenantApi: '/api/tenants',
     organizationApi: '/api/organizations',
+    gradeApi: '/api/grades',
     roleApi: '/api/roles',
     studentApi: '/api/students'
 };

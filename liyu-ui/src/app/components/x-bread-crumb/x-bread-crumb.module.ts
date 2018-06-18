@@ -3,14 +3,16 @@ import {CommonModule} from '@angular/common';
 import {XBreadCrumbComponent} from './x-bread-crumb.component';
 import {NgZorroAntdModule} from 'ng-zorro-antd';
 import {RouterModule} from '@angular/router';
+import {XBreadCrumbService} from "./x-bread-crumb.service";
 
 @NgModule({
     imports: [
         CommonModule,
         RouterModule,
-        NgZorroAntdModule.forRoot()
+        NgZorroAntdModule
     ],
     declarations: [XBreadCrumbComponent],
+    providers: [XBreadCrumbService],
     exports: [XBreadCrumbComponent]
 })
 

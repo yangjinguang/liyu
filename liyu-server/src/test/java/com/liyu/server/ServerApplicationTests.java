@@ -1,13 +1,7 @@
 package com.liyu.server;
 
-import com.liyu.server.service.AccountService;
-import com.liyu.server.service.ContactService;
-import com.liyu.server.service.OrganizationService;
-import com.liyu.server.service.TenantService;
-import com.liyu.server.tables.pojos.Account;
-import com.liyu.server.tables.pojos.Contact;
-import com.liyu.server.tables.pojos.Organization;
-import com.liyu.server.tables.pojos.Tenant;
+import com.liyu.server.service.*;
+import com.liyu.server.tables.pojos.*;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -29,6 +23,10 @@ public class ServerApplicationTests {
     private OrganizationService organizationService;
     @Resource
     private ContactService contactService;
+    @Resource
+    private GradeService gradeService;
+    @Resource
+    private RoleService roleService;
 
     @Test
     public void contextLoads() {
@@ -80,6 +78,47 @@ public class ServerApplicationTests {
 
 //        // 绑定帐号到组织
 //        organizationService.bindContact(organization.getOrganizationId(), contact.getContactId());
+
+        Grade newGrade = new Grade();
+        newGrade.setName("托班");
+        newGrade.setLevel(0);
+        gradeService.create(newGrade);
+
+        newGrade.setName("小班");
+        newGrade.setLevel(1);
+        gradeService.create(newGrade);
+
+        newGrade.setName("中班");
+        newGrade.setLevel(2);
+        gradeService.create(newGrade);
+
+        newGrade.setName("大班");
+        newGrade.setLevel(3);
+        gradeService.create(newGrade);
+
+        newGrade.setName("学前班");
+        newGrade.setLevel(4);
+        gradeService.create(newGrade);
+
+        Role newRole = new Role();
+        newRole.setRoleId("teacher-1");
+        newRole.setName("老师");
+        newRole.setTenantId("root");
+        newRole.setLocked(true);
+        roleService.create(newRole);
+
+        newRole.setRoleId("teacher-2");
+        newRole.setName("班主任老师");
+        newRole.setTenantId("root");
+        newRole.setLocked(true);
+        roleService.create(newRole);
+
+        newRole.setRoleId("teacher-3");
+        newRole.setName("生活老师");
+        newRole.setTenantId("root");
+        newRole.setLocked(true);
+        roleService.create(newRole);
+
     }
 
     @Test

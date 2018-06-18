@@ -1,0 +1,45 @@
+<form nz-form [formGroup]="organizationForm">
+    <nz-form-item>
+        <nz-form-label [nzSpan]="5" [nzRequired]="true">年级</nz-form-label>
+        <nz-form-control [nzSpan]="12">
+            <nz-select style="width: 200px;"
+                       nzShowSearch
+                       nzAllowClear
+                       nzPlaceHolder="选择一个年级"
+                       formControlName="gradeId">
+                <nz-option *ngFor="let grade of grades" [nzLabel]="grade.name" [nzValue]="grade.gradeId"></nz-option>
+            </nz-select>
+            <nz-form-explain *ngIf="organizationForm.get('gradeId').dirty && organizationForm.get('gradeId').errors">
+                必填
+            </nz-form-explain>
+        </nz-form-control>
+    </nz-form-item>
+    <nz-form-item>
+        <nz-form-label [nzSpan]="5" [nzRequired]="true">班级名称</nz-form-label>
+        <nz-form-control [nzSpan]="12">
+            <input nz-input formControlName="name">
+            <nz-form-explain *ngIf="organizationForm.get('name').dirty && organizationForm.get('name').errors">
+                必填
+            </nz-form-explain>
+        </nz-form-control>
+    </nz-form-item>
+    <nz-form-item>
+        <nz-form-label [nzSpan]="5">教师</nz-form-label>
+        <nz-form-control [nzSpan]="12">
+            <nz-select nzShowSearch
+                       nzAllowClear
+                       nzMode="multiple"
+                       [nzServerSearch]="true"
+                       (nzOnSearch)="searchContact($event)"
+                       (nzScrollToBottom)="loadMore()"
+                       formControlName="contactIds">
+                <ng-container *ngFor="let contact of contacts">
+                    <nz-option *ngIf="!isLoading" [nzValue]="contact.contactId" [nzLabel]="contact.name"></nz-option>
+                </ng-container>
+                <nz-option *ngIf="isLoading" nzDisabled nzCustomContent>
+                    <i class="anticon anticon-loading anticon-spin loading-icon"></i> Loading Data...
+                </nz-option>
+            </nz-select>
+        </nz-form-control>
+    </nz-form-item>
+</form>

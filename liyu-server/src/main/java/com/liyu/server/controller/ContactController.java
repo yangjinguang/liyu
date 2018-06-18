@@ -1,6 +1,5 @@
 package com.liyu.server.controller;
 
-import com.liyu.server.model.ContactCreateBody;
 import com.liyu.server.model.ContactDetail;
 import com.liyu.server.model.OrganizationDetail;
 import com.liyu.server.service.AccountService;
@@ -46,10 +45,26 @@ public class ContactController {
     public APIResponse list(
             @RequestHeader(value = "X-TENANT-ID") String tenantId,
             @RequestParam(value = "page", required = false, defaultValue = "1") Integer page,
-            @RequestParam(value = "size", required = false, defaultValue = "20") Integer size) {
-        Integer total = contactService.countByTenantId(tenantId);
-        List<Contact> contacts = contactService.listByTenantId(tenantId, (page - 1) * size, size);
-        return APIResponse.withPagination(contacts, total, page, size);
+            @RequestParam(value = "size", required = false, defaultValue = "20") Integer size,
+            @RequestParam(value = "searchText", required = false) String searchText) {
+        Integer total = contactService.countByTenantId(tenantId, searchText);
+        List<Contact> contacts = contactService.listByTenantId(tenantId, (page - 1) * size, size, searchText);
+        ArrayList<ContactDetail> contactDetails = new ArrayList<>();
+        for (Contact contact : contacts) {
+            ContactDetail contactDetail = new ContactDetail(contact);
+            List<Organization> organizations = organizationService.listByContactId(contact.getContactId());
+            ArrayList<String> organizationIds = new ArrayList<>();
+            ArrayList<String> organizationNames = new ArrayList<>();
+            for (Organization organization : organizations) {
+                organizationIds.add(organization.getOrganizationId());
+                organizationNames.add(organization.getName());
+            }
+            contactDetail.setOrganiztionIds(organizationIds);
+            contactDetail.setOrganizations(organizations);
+            contactDetail.setOrganizationTitle(String.join(",", organizationNames));
+            contactDetails.add(contactDetail);
+        }
+        return APIResponse.withPagination(contactDetails, total, page, size);
     }
 
     @ApiOperation(value = "创建联系人", notes = "")
@@ -58,12 +73,11 @@ public class ContactController {
     @RequestMapping(value = "", method = RequestMethod.POST)
     public APIResponse create(
             @RequestHeader(value = "X-TENANT-ID") String tenantId,
-            @RequestBody ContactCreateBody newContact) {
-        String username = newContact.getUsername();
-        Account account = accountService.getByUsername(username);
+            @RequestBody Contact newContact) {
+        Account account = accountService.getByPhone(newContact.getPhone());
         if (account == null) {
             Account newAccount = new Account();
-            newAccount.setUsername(username);
+            newAccount.setPhone(newContact.getPhone());
             newAccount.setPassword("123456");
             newAccount.setEmail(newContact.getEmail());
             newAccount.setPhone(newContact.getPhone());
@@ -71,10 +85,17 @@ public class ContactController {
             account = accountService.create(newAccount);
         }
         Contact contact = contactService.create(newContact, account.getAccountId(), tenantId);
-        List<String> organizationIds = newContact.getOrganizationIds();
-        contactService.bindOrganizations(contact.getContactId(), organizationIds);
         return APIResponse.success(contact);
     }
+
+    @ApiOperation(value = "修改用户", notes = "")
+    @RequestMapping(value = "/{contactId}", method = RequestMethod.PUT)
+    public APIResponse update(@PathVariable String contactId,
+                              @RequestBody Contact newContact) {
+        Contact contact = contactService.update(contactId, newContact);
+        return APIResponse.success(contact);
+    }
+
 
     @ApiOperation(value = "获取当前用户信息", notes = "")
     @ResponseBody
@@ -96,12 +117,11 @@ public class ContactController {
         ContactDetail contactDetail = new ContactDetail(contact);
         List<Organization> organizations = organizationService.listByContactId(contact.getContactId());
         ArrayList<String> organizationIds = new ArrayList<>();
-        ArrayList<OrganizationDetail> organizationDetails = new ArrayList<>();
         for (Organization organization : organizations) {
             organizationIds.add(organization.getOrganizationId());
         }
-        contactDetail.setOrganizationIds(organizationIds);
-        contactDetail.setOrganizations(organizationDetails);
+        contactDetail.setOrganiztionIds(organizationIds);
+        contactDetail.setOrganizations(organizations);
         return APIResponse.success(contactDetail);
     }
 

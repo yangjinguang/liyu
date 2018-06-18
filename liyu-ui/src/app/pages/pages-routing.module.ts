@@ -12,6 +12,10 @@ const routes: Routes = [
                 loadChildren: './dashboard/dashboard.module#DashboardModule'
             },
             {
+                path: 'personnel',
+                loadChildren: './personnel/personnel.module#PersonnelModule'
+            },
+            {
                 path: '',
                 redirectTo: 'dashboard',
                 pathMatch: 'full'

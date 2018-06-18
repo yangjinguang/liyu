@@ -37,7 +37,10 @@ public class AccountServiceImpl implements AccountService {
 
     @Override
     public Account getByUsernameAndPassword(String username, String password) {
-        AccountRecord accountRecord = context.selectFrom(ACCOUNT).where(ACCOUNT.USERNAME.eq(username)).fetchOne();
+        AccountRecord accountRecord = context.selectFrom(ACCOUNT)
+                .where(ACCOUNT.USERNAME.eq(username))
+                .or(ACCOUNT.PHONE.eq(username))
+                .fetchOne();
         if (accountRecord == null) {
             return null;
         } else {
@@ -75,6 +78,15 @@ public class AccountServiceImpl implements AccountService {
     }
 
     @Override
+    public Account getByPhone(String phone) {
+        AccountRecord accountRecord = context.selectFrom(ACCOUNT).where(ACCOUNT.PHONE.equal(phone)).fetchOne();
+        if (accountRecord == null) {
+            return null;
+        }
+        return accountRecord.into(Account.class);
+    }
+
+    @Override
     public Account create(Account newAccount) {
         String salt = RandomStringUtils.random(5, true, true);
         String pass = newAccount.getPassword() + salt;
@@ -101,9 +113,9 @@ public class AccountServiceImpl implements AccountService {
     }
 
     @Override
-    public Account update(ULong id, Account newAccount) {
+    public Account update(String accountId, Account newAccount) {
         AccountRecord accountRecord = context.selectFrom(ACCOUNT)
-                .where(ACCOUNT.ID.eq(id))
+                .where(ACCOUNT.ACCOUNT_ID.eq(accountId))
                 .fetchOptional()
                 .orElseThrow(() -> new NoDataFoundException("account not found"));
         String username = newAccount.getUsername();

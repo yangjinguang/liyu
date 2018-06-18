@@ -20,7 +20,7 @@ public interface RoleService {
      *
      * @return List<Role>
      */
-    List<Role> list(Integer offset, Integer size);
+    List<Role> list();
 
     /**
      * 创建角色

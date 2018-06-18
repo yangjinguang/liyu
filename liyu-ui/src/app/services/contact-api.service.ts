@@ -1,10 +1,10 @@
 import {Injectable} from '@angular/core';
 import {AppHttpClient} from '../libs/http/http-client';
 import {environment} from '../../environments/environment';
-import {Observable} from "rxjs/internal/Observable";
-import {ContactListResponse} from "../models/contact-list-response";
-import {ContactResponse} from "../models/contact-response";
-import {ContactStatus} from "../enums/contactStatus";
+import {Observable} from 'rxjs/internal/Observable';
+import {ContactListResponse} from '../models/contact-list-response';
+import {ContactResponse} from '../models/contact-response';
+import {ContactStatus} from '../enums/contactStatus';
 
 @Injectable()
 export class ContactApiService {
@@ -18,16 +18,16 @@ export class ContactApiService {
         return this.http.get(`${this.baseUrl}/profile`);
     }
 
-    public list(page: number, size: number): Observable<ContactListResponse> {
-        return this.http.get(this.baseUrl, {page: page, size: size});
+    public list(page: number, size: number, searchText: string): Observable<ContactListResponse> {
+        return this.http.get(this.baseUrl, {page: page, size: size, searchText: searchText});
     }
 
     public create(postData: object): Observable<ContactResponse> {
         return this.http.post(`${this.baseUrl}`, postData);
     }
 
-    public update(id: number, postData: object): Observable<ContactResponse> {
-        return this.http.put(`${this.baseUrl}/${id}`, postData);
+    public update(contactId: string, postData: object): Observable<ContactResponse> {
+        return this.http.put(`${this.baseUrl}/${contactId}`, postData);
     }
 
     public detail(id: number): Observable<ContactResponse> {

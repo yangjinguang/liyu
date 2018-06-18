@@ -9,7 +9,7 @@ import {SideNavService} from './side-nav.service';
     imports: [
         CommonModule,
         RouterModule,
-        NgZorroAntdModule.forRoot()
+        NgZorroAntdModule
     ],
     declarations: [SideNavComponent],
     exports: [SideNavComponent],

@@ -23,17 +23,11 @@ public class RoleController {
     private RoleService roleService;
 
     @ApiOperation(value = "获取角色列表", notes = "")
-    @ResponseBody
-    @ApiImplicitParams({
-            @ApiImplicitParam(name = "page", value = "页码", required = false, dataType = "int", paramType = "query"),
-            @ApiImplicitParam(name = "size", value = "每页条数", required = false, dataType = "int", paramType = "query")
-    })
     @RequestMapping(value = "", method = RequestMethod.GET)
     public APIResponse list(@RequestParam(value = "page", required = false, defaultValue = "1") Integer page,
                             @RequestParam(value = "size", required = false, defaultValue = "20") Integer size) {
-        Integer total = roleService.count();
-        List<Role> roles = roleService.list((page - 1) * size, size);
-        return APIResponse.withPagination(roles, total, page, size);
+        List<Role> roles = roleService.list();
+        return APIResponse.success(roles);
     }
 
     @ApiOperation(value = "创建角色", notes = "")

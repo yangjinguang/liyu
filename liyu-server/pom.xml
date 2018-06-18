@@ -90,14 +90,6 @@
                             <forcedTypes>
                                 <forcedType>
                                     <name>BOOLEAN</name>
-                                    <expression>.*.organization.is_class</expression>
-                                </forcedType>
-                                <forcedType>
-                                    <name>BOOLEAN</name>
-                                    <expression>.*.organization.is_root</expression>
-                                </forcedType>
-                                <forcedType>
-                                    <name>BOOLEAN</name>
                                     <expression>.*.organization.enabled</expression>
                                 </forcedType>
                                 <forcedType>
@@ -114,6 +106,14 @@
                                 </forcedType>
                                 <forcedType>
                                     <name>BOOLEAN</name>
+                                    <expression>.*.role.locked</expression>
+                                </forcedType>
+                                <forcedType>
+                                    <name>BOOLEAN</name>
+                                    <expression>.*.grade.enabled</expression>
+                                </forcedType>
+                                <forcedType>
+                                    <name>BOOLEAN</name>
                                     <expression>.*.tenant.enabled</expression>
                                 </forcedType>
                                 <forcedType>
@@ -122,9 +122,9 @@
                                     <expression>.*.contact.status</expression>
                                 </forcedType>
                                 <forcedType>
-                                    <userType>com.liyu.server.enums.ContactTypeEnum</userType>
+                                    <userType>com.liyu.server.enums.GenderEnum</userType>
                                     <enumConverter>true</enumConverter>
-                                    <expression>.*.contact.contact_type</expression>
+                                    <expression>.*.contact.gender</expression>
                                 </forcedType>
                             </forcedTypes>
                         </database>

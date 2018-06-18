@@ -1,1 +1,22 @@
 /* You can add global styles to this file, and also import other style files */
+*, ::after, ::before {
+    box-sizing: border-box;
+    outline: none;
+}
+
+.common-list {
+    display: flex;
+    flex-direction: column;
+    padding: 20px;
+    &-filter {
+        margin-bottom: 10px;
+    }
+    &-header {
+        margin-bottom: 10px;
+    }
+    &-table {
+        flex: 1;
+        overflow: auto;
+    }
+
+}

@@ -1,0 +1,46 @@
+<form nz-form [formGroup]="contactForm">
+    <nz-form-item>
+        <nz-form-label [nzSpan]="5" [nzRequired]="true">姓名</nz-form-label>
+        <nz-form-control [nzSpan]="12">
+            <input nz-input formControlName="name">
+            <nz-form-explain *ngIf="contactForm.get('name').dirty && contactForm.get('name').errors">
+                必填
+            </nz-form-explain>
+        </nz-form-control>
+    </nz-form-item>
+    <nz-form-item>
+        <nz-form-label [nzSpan]="5" [nzRequired]="true">性别</nz-form-label>
+        <nz-form-control [nzSpan]="12">
+            <nz-select formControlName="gender">
+                <nz-option [nzValue]="0" [nzLabel]="'男'"></nz-option>
+                <nz-option [nzValue]="1" [nzLabel]="'女'"></nz-option>
+            </nz-select>
+            <nz-form-explain *ngIf="contactForm.get('gender').dirty && contactForm.get('gender').errors">
+                必填
+            </nz-form-explain>
+        </nz-form-control>
+    </nz-form-item>
+    <nz-form-item>
+        <nz-form-label [nzSpan]="5" [nzRequired]="true">手机号</nz-form-label>
+        <nz-form-control [nzSpan]="12">
+            <input nz-input formControlName="phone">
+            <nz-form-explain *ngIf="contactForm.get('phone').dirty && contactForm.get('phone').errors">
+                必填
+            </nz-form-explain>
+        </nz-form-control>
+    </nz-form-item>
+    <nz-form-item>
+        <nz-form-label [nzSpan]="5" [nzRequired]="true">角色</nz-form-label>
+        <nz-form-control [nzSpan]="12">
+            <nz-select style="width: 200px;"
+                       nzShowSearch
+                       nzAllowClear
+                       formControlName="roleId">
+                <nz-option *ngFor="let role of roles" [nzLabel]="role.name" [nzValue]="role.roleId"></nz-option>
+            </nz-select>
+            <nz-form-explain *ngIf="contactForm.get('roleId').dirty && contactForm.get('roleId').errors">
+                必填
+            </nz-form-explain>
+        </nz-form-control>
+    </nz-form-item>
+</form>

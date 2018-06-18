@@ -1,7 +1,6 @@
 package com.liyu.server.service;
 
-import com.liyu.server.model.OrganizationDetail;
-import com.liyu.server.model.OrganizationTree;
+import com.liyu.server.model.OrganizationExtend;
 import com.liyu.server.tables.pojos.Contact;
 import com.liyu.server.tables.pojos.Organization;
 import org.jooq.types.ULong;
@@ -18,13 +17,15 @@ public interface OrganizationService {
      */
     Organization byId(ULong id);
 
+    Integer countByTenantId(String tenantId);
+
     /**
      * 根据租户ID获取组织列表
      *
      * @param tenantId 租户ID
      * @return List<Organization>
      */
-    List<OrganizationDetail> listByTenantId(String tenantId);
+    List<OrganizationExtend> listByTenantId(String tenantId, Integer offset, Integer limit);
 
     /**
      * 创建新组织
@@ -37,11 +38,11 @@ public interface OrganizationService {
     /**
      * 更新组织
      *
-     * @param id              组织ID
+     * @param organizationId              组织ID
      * @param newOrganization 组织信息
      * @return Organization
      */
-    Organization update(ULong id, Organization newOrganization);
+    Organization update(String organizationId, Organization newOrganization);
 
     /**
      * 删除组织
@@ -66,23 +67,17 @@ public interface OrganizationService {
      */
     void unbindContact(String organizationId, String accountId);
 
-    /**
-     * 根据组织ID获取账户个数
-     *
-     * @param organizationId
-     * @return
-     */
-    Integer contactsCount(String organizationId);
+    void clearContact(String organizationId);
+
+    void bindContacts(String organizationId, List<String> contactIds);
 
     /**
      * 根据组织ID获取账户列表
      *
      * @param organizationId
-     * @param offset
-     * @param size
      * @return
      */
-    List<Contact> contacts(String organizationId, Integer offset, Integer size);
+    List<Contact> contacts(String organizationId);
 
     List<Organization> listByContactId(String contactId);
 }

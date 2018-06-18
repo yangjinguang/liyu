@@ -16,7 +16,7 @@ CREATE TABLE `tenant` (
 CREATE TABLE `account` (
   `id` bigint(20) unsigned NOT NULL AUTO_INCREMENT COMMENT 'ID',
   `account_id` varchar(45) NOT NULL DEFAULT '' COMMENT '帐号ID',
-  `username` varchar(16) NOT NULL DEFAULT '' COMMENT '帐号',
+  `username` varchar(16) DEFAULT '' COMMENT '帐号',
   `password` varchar(32) NOT NULL DEFAULT '' COMMENT '密码',
   `salt` varchar(5) NOT NULL DEFAULT '' COMMENT '盐值',
   `email` varchar(255) DEFAULT '' COMMENT '邮箱',
@@ -38,11 +38,12 @@ CREATE TABLE `contact` (
   `account_id` varchar(45) NOT NULL DEFAULT '' COMMENT '帐号ID',
   `tenant_id` varchar(45) NOT NULL DEFAULT '' COMMENT '租户ID',
   `name` varchar(45) DEFAULT '' COMMENT '姓名',
+  `gender` tinyint(4) DEFAULT '0' COMMENT '性别',
   `email` varchar(255) DEFAULT '' COMMENT '邮箱',
   `phone` varchar(20) DEFAULT '' COMMENT '手机号',
   `avatar` varchar(255) DEFAULT '' COMMENT '头像Url',
+  `role_id` varchar(45) NOT NULL DEFAULT '' COMMENT '角色ID',
   `is_admin` tinyint(4) DEFAULT '0' COMMENT '是否是管理员',
-  `contact_type` tinyint(4) DEFAULT '0' COMMENT '联系人类型',
   `status` tinyint(4) DEFAULT '0' COMMENT '状态',
   `created_at` datetime NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
   `updated_at` datetime NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '更新时间',
@@ -57,7 +58,7 @@ CREATE TABLE `organization` (
   `description` varchar(255) DEFAULT '' COMMENT '描述',
   `avatar` varchar(255) DEFAULT '' COMMENT '头像Url',
   `enabled` tinyint(4) DEFAULT '1' COMMENT '是否启用',
-  `grade_id` varchar(45) NOT NULL DEFAULT '' COMMENT '年级ID',
+  `grade_id` varchar(45) DEFAULT '' COMMENT '年级ID',
   `tenant_id` varchar(45) NOT NULL DEFAULT '' COMMENT '租户ID',
   `created_at` datetime NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
   `updated_at` datetime NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '更新时间',
@@ -71,14 +72,14 @@ CREATE TABLE `grade` (
   `grade_id` varchar(45) NOT NULL DEFAULT '' COMMENT '年级ID',
   `name` varchar(45) DEFAULT '' COMMENT '名称',
   `description` varchar(255) DEFAULT '' COMMENT '描述',
-  `avatar` varchar(255) DEFAULT '' COMMENT '头像Url',
+  `level` int(11) DEFAULT 0 COMMENT '描述',
   `enabled` tinyint(4) DEFAULT '1' COMMENT '是否启用',
-  `tenant_id` varchar(45) NOT NULL DEFAULT '' COMMENT '租户ID',
   `created_at` datetime NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
   `updated_at` datetime NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '更新时间',
   PRIMARY KEY (`id`),
   UNIQUE KEY `uniq_grade_id` (`grade_id`),
-  UNIQUE KEY `uniq_name` (`name`)
+  UNIQUE KEY `uniq_name` (`name`),
+  UNIQUE KEY `uniq_level` (`level`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT '年级表';
 
 CREATE TABLE `role` (
@@ -88,6 +89,7 @@ CREATE TABLE `role` (
   `description` varchar(255) DEFAULT '' COMMENT '描述',
   `tenant_id` varchar(45) NOT NULL DEFAULT '' COMMENT '租户ID',
   `enabled` tinyint(4) DEFAULT '1' COMMENT '是否启用',
+  `locked` tinyint(4) DEFAULT '0' COMMENT '是否锁定',
   `created_at` datetime NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
   `updated_at` datetime NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '更新时间',
   PRIMARY KEY (`id`),

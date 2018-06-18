@@ -27,6 +27,9 @@ export class XBreadCrumbService {
     }
 
     public pushItem(item: XBreadCrumbItem) {
+        if (this.items.find(i => i.text === item.text)) {
+            return;
+        }
         this.items.push(item);
         this.next();
         return this.items;

@@ -1,21 +1,39 @@
 package com.liyu.server.model;
 
-import com.liyu.server.tables.pojos.Organization;
+import com.liyu.server.tables.pojos.Contact;
 
 import java.util.List;
 
-public class OrganizationDetail extends Organization {
-    private List<String> route;
+public class OrganizationDetail extends OrganizationExtend {
+    private List<String> contactIds;
+    private List<Contact> contacts;
+    private String contactNameTitle;
 
-    public OrganizationDetail(Organization organization) {
+    public OrganizationDetail(OrganizationExtend organization) {
         super(organization);
     }
 
-    public void setRoute(List<String> route) {
-        this.route = route;
+    public List<Contact> getContacts() {
+        return contacts;
     }
 
-    public List<String> getRoute() {
-        return route;
+    public void setContacts(List<Contact> contacts) {
+        this.contacts = contacts;
+    }
+
+    public List<String> getContactIds() {
+        return contactIds;
+    }
+
+    public void setContactIds(List<String> contactIds) {
+        this.contactIds = contactIds;
+    }
+
+    public String getContactNameTitle() {
+        return contactNameTitle;
+    }
+
+    public void setContactNameTitle(String contactNameTitle) {
+        this.contactNameTitle = contactNameTitle;
     }
 }

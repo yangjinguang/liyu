@@ -3,7 +3,6 @@ package com.liyu.server.secruity;
 import com.liyu.server.service.AccountService;
 import com.liyu.server.service.ContactService;
 import com.liyu.server.tables.pojos.Account;
-import com.liyu.server.tables.pojos.Contact;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.authentication.BadCredentialsException;
