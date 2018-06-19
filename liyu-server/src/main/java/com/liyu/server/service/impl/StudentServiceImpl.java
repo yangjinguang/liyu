@@ -1,5 +1,7 @@
 package com.liyu.server.service.impl;
 
+import com.liyu.server.enums.GenderEnum;
+import com.liyu.server.enums.StudentStatusEnum;
 import com.liyu.server.model.StudentProfile;
 import com.liyu.server.mongo.StudentProfilePropertyRepository;
 import com.liyu.server.mongo.StudentProfileRepository;
@@ -32,27 +34,41 @@ public class StudentServiceImpl implements StudentService {
     private StudentProfilePropertyRepository studentProfilePropertyRepository;
 
     @Override
-    public Integer count(String tenantId, String organizationId) {
+    public Integer count(String tenantId, String organizationId, String name, String phone) {
         if (tenantId == null || tenantId.isEmpty()) {
             throw new IllegalArgumentException("缺少tenantId");
         }
         HashSet<Condition> conditions = new HashSet<>();
         conditions.add(STUDENT.TENANT_ID.eq(tenantId));
+        conditions.add(STUDENT.STATUS.notEqual(StudentStatusEnum.DELETED));
         if (organizationId != null && !organizationId.isEmpty()) {
             conditions.add(STUDENT.ORGANIZATION_ID.eq(organizationId));
+        }
+        if (name != null && !name.isEmpty()) {
+            conditions.add(STUDENT.NAME.like("%" + name + "%"));
+        }
+        if (phone != null && !phone.isEmpty()) {
+            conditions.add(STUDENT.PHONE.like("%" + phone + "%"));
         }
         return context.selectCount().from(STUDENT).where(conditions).fetchOne().into(int.class);
     }
 
     @Override
-    public List<Student> query(String tenantId, String organizationId, Integer offset, Integer size) {
+    public List<Student> query(String tenantId, Integer offset, Integer size, String organizationId, String name, String phone) {
         if (tenantId == null || tenantId.isEmpty()) {
             throw new IllegalArgumentException("缺少tenantId");
         }
         HashSet<Condition> conditions = new HashSet<>();
         conditions.add(STUDENT.TENANT_ID.eq(tenantId));
+        conditions.add(STUDENT.STATUS.notEqual(StudentStatusEnum.DELETED));
         if (organizationId != null && !organizationId.isEmpty()) {
             conditions.add(STUDENT.ORGANIZATION_ID.eq(organizationId));
+        }
+        if (name != null && !name.isEmpty()) {
+            conditions.add(STUDENT.NAME.like("%" + name + "%"));
+        }
+        if (phone != null && !phone.isEmpty()) {
+            conditions.add(STUDENT.PHONE.like("%" + phone + "%"));
         }
         return context.selectFrom(STUDENT)
                 .where(conditions)
@@ -68,6 +84,7 @@ public class StudentServiceImpl implements StudentService {
                 .columns(
                         STUDENT.STUDENT_ID,
                         STUDENT.NAME,
+                        STUDENT.GENDER,
                         STUDENT.PHONE,
                         STUDENT.AVATAR,
                         STUDENT.BIRTHDAY,
@@ -79,13 +96,14 @@ public class StudentServiceImpl implements StudentService {
                 .values(
                         CommonUtils.UUIDGenerator(),
                         newStudent.getName(),
+                        newStudent.getGender(),
                         newStudent.getPhone(),
                         newStudent.getAvatar(),
                         newStudent.getBirthday(),
                         newStudent.getOrganizationId(),
                         newStudent.getProfileId(),
                         newStudent.getTenantId(),
-                        newStudent.getStatus()
+                        StudentStatusEnum.NORMAL
                 ).returning()
                 .fetchOne()
                 .into(Student.class);
@@ -100,6 +118,10 @@ public class StudentServiceImpl implements StudentService {
         String name = newStudent.getName();
         if (name != null && !name.isEmpty()) {
             studentRecord.setName(name);
+        }
+        GenderEnum gender = newStudent.getGender();
+        if (gender != null) {
+            studentRecord.setGender(gender);
         }
         String phone = newStudent.getPhone();
         if (phone != null && !phone.isEmpty()) {
@@ -120,6 +142,10 @@ public class StudentServiceImpl implements StudentService {
         String organizationId = newStudent.getOrganizationId();
         if (organizationId != null && !organizationId.isEmpty()) {
             studentRecord.setOrganizationId(organizationId);
+        }
+        StudentStatusEnum status = newStudent.getStatus();
+        if (status != null) {
+            studentRecord.setStatus(status);
         }
         studentRecord.update();
         return studentRecord.into(Student.class);

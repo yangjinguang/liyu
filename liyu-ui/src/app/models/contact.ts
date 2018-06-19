@@ -1,4 +1,4 @@
-import {ContactStatus} from '../enums/contactStatus';
+import {ContactStatus} from '../pages/personnel/enums/contact-status';
 import {Organization} from '../pages/personnel/models/organization';
 
 export interface Contact {

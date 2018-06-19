@@ -1,5 +1,6 @@
 package com.liyu.server.model;
 
+import com.liyu.server.enums.GenderEnum;
 import com.liyu.server.enums.StudentStatusEnum;
 import com.liyu.server.tables.pojos.Organization;
 import com.liyu.server.tables.pojos.Student;
@@ -22,8 +23,8 @@ public class StudentDetail extends Student {
         this.organization = organization;
     }
 
-    public StudentDetail(ULong id, String studentId, String name, String phone, String avatar, String profileId, Timestamp birthday, StudentStatusEnum status, String tenantId, String organizationId, Timestamp createdAt, Timestamp updatedAt, Organization organization) {
-        super(id, studentId, name, phone, avatar, profileId, birthday, status, tenantId, organizationId, createdAt, updatedAt);
+    public StudentDetail(ULong id, String studentId, String name, GenderEnum gender, String phone, String avatar, String profileId, Timestamp birthday, StudentStatusEnum status, String tenantId, String organizationId, Timestamp createdAt, Timestamp updatedAt, Organization organization) {
+        super(id, studentId, name, gender, phone, avatar, profileId, birthday, status, tenantId, organizationId, createdAt, updatedAt);
         this.organization = organization;
     }
 

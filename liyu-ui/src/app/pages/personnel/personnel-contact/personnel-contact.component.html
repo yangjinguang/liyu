@@ -8,7 +8,7 @@
         </button>
     </div>
     <div class="common-list-table">
-        <nz-table #basicTable [nzData]="contacts">
+        <nz-table #basicTable [nzLoading]="isLoading" [nzData]="contacts">
             <thead>
             <tr>
                 <th>姓名</th>
@@ -17,7 +17,7 @@
                 <th>角色</th>
                 <th>所在班级</th>
                 <th>状态</th>
-                <th>操作</th>
+                <th nzWidth="120px">操作</th>
             </tr>
             </thead>
             <tbody>
@@ -27,8 +27,8 @@
                 <td>{{data.phone}}</td>
                 <td>{{data.roleId|personnelRoleTrans:roles}}</td>
                 <td>{{data.organizationTitle}}</td>
-                <td>{{data.status}}</td>
-                <td>
+                <td>{{data.status|personnelContactStatusTrans}}</td>
+                <td nzWidth="120px">
                     <a (click)="contactCreateModalOpen(data)">编辑</a>
                     <nz-divider nzType="vertical"></nz-divider>
                     <a (click)="contactDelete(data)">删除</a>

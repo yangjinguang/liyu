@@ -14,6 +14,8 @@ import {PersonnelContactCreateModalComponent} from './components/personnel-conta
 import {PersonnelRoleTransPipe} from './pipes/personnel-role-trans.pipe';
 import {PersonnelGenderTransPipe} from './pipes/personnel-gender-trans.pipe';
 import {PersonnelStudentCreateModalComponent} from './components/personnel-student-create-modal/personnel-student-create-modal.component';
+import {PersonnelStudentStatusTransPipe} from './pipes/personnel-student-status-trans.pipe';
+import {PersonnelContactStatusTransPipe} from './pipes/personnel-contact-status-trans.pipe';
 
 @NgModule({
     imports: [
@@ -33,7 +35,9 @@ import {PersonnelStudentCreateModalComponent} from './components/personnel-stude
         PersonnelContactCreateModalComponent,
         PersonnelRoleTransPipe,
         PersonnelGenderTransPipe,
-        PersonnelStudentCreateModalComponent
+        PersonnelContactStatusTransPipe,
+        PersonnelStudentCreateModalComponent,
+        PersonnelStudentStatusTransPipe
     ],
     entryComponents: [
         PersonnelOrganizationCreateModalComponent,

@@ -27,11 +27,13 @@ public class StudentController {
     @ApiOperation(value = "学生综合查询")
     @RequestMapping(value = "", method = RequestMethod.GET)
     public APIResponse query(@RequestHeader(value = "X-TENANT-ID") String tenantId,
-                             @RequestParam(value = "organizationId", required = false) String organizationId,
                              @RequestParam(value = "page", defaultValue = "1") Integer page,
-                             @RequestParam(value = "size", defaultValue = "20") Integer size) {
-        Integer count = studentService.count(tenantId, organizationId);
-        List<Student> students = studentService.query(tenantId, organizationId, (page - 1) * size, size);
+                             @RequestParam(value = "size", defaultValue = "20") Integer size,
+                             @RequestParam(value = "organizationId", required = false) String organizationId,
+                             @RequestParam(value = "name", required = false) String name,
+                             @RequestParam(value = "phone", required = false) String phone) {
+        Integer count = studentService.count(tenantId, organizationId, name, phone);
+        List<Student> students = studentService.query(tenantId, (page - 1) * size, size, organizationId, name, phone);
         ArrayList<StudentDetail> studentDetails = new ArrayList<>();
         for (Student student : students) {
             StudentDetail studentDetail = new StudentDetail(student);

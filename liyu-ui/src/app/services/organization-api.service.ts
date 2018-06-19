@@ -18,8 +18,8 @@ export class OrganizationApiService {
         return this.http.get(this.baseUrl, {page: page, size: size, searchText: searchText});
     }
 
-    public miniList(page: number, size: number, searchText?: string): Observable<OrganizationListResponse> {
-        return this.http.get(`${this.baseUrl}/mini`, {page: page, size: size, searchText: searchText});
+    public miniList(searchData?: object): Observable<OrganizationListResponse> {
+        return this.http.get(`${this.baseUrl}/mini`, searchData);
     }
 
     public create(postData: object): Observable<OrganizationResponse> {

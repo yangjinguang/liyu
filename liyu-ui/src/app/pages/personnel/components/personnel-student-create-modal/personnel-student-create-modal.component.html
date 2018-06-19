@@ -9,6 +9,18 @@
         </nz-form-control>
     </nz-form-item>
     <nz-form-item>
+        <nz-form-label [nzSpan]="5" [nzRequired]="true">性别</nz-form-label>
+        <nz-form-control [nzSpan]="12">
+            <nz-select formControlName="gender">
+                <nz-option [nzValue]="0" [nzLabel]="'男'"></nz-option>
+                <nz-option [nzValue]="1" [nzLabel]="'女'"></nz-option>
+            </nz-select>
+            <nz-form-explain *ngIf="studentForm.get('gender').dirty && studentForm.get('gender').errors">
+                必填
+            </nz-form-explain>
+        </nz-form-control>
+    </nz-form-item>
+    <nz-form-item>
         <nz-form-label [nzSpan]="5" [nzRequired]="true">家长手机号</nz-form-label>
         <nz-form-control [nzSpan]="12">
             <input nz-input formControlName="phone">

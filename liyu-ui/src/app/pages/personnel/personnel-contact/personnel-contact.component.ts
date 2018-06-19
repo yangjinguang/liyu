@@ -6,7 +6,8 @@ import {FormGroup} from '@angular/forms';
 import {ContactApiService} from '../../../services/contact-api.service';
 import {RoleApiService} from '../../../services/role-api.service';
 import {Role} from '../../../models/role';
-import {ContactStatus} from '../../../enums/contactStatus';
+import {ContactStatus} from '../enums/contact-status';
+import {XBreadCrumbService} from '../../../components/x-bread-crumb/x-bread-crumb.service';
 
 @Component({
     selector: 'app-personnel-contact',
@@ -20,24 +21,37 @@ export class PersonnelContactComponent implements OnInit {
     public size = 20;
     public total: number;
     public roles: Role[];
+    public isLoading: boolean;
 
     constructor(private modalService: NzModalService,
                 private contactApi: ContactApiService,
                 private roleApi: RoleApiService,
-                private msg: NzMessageService) {
+                private msg: NzMessageService,
+                private bcService: XBreadCrumbService) {
         this.page = 1;
     }
 
     ngOnInit() {
+        this.bcService.setItems([
+            {
+                text: '人员管理',
+                link: '/pages/personnel'
+            },
+            {
+                text: '员工管理'
+            }
+        ]);
         this.getRoleList();
         this.getContactList(this.page);
     }
 
     private getContactList(page: number) {
+        this.isLoading = true;
         this.contactApi.list(page, this.size).subscribe(result => {
             this.contacts = result.data.list;
             this.page = result.data.pagination.page;
             this.total = result.data.pagination.total;
+            this.isLoading = false;
         });
     }
 

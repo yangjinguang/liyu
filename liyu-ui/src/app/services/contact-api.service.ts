@@ -4,7 +4,7 @@ import {environment} from '../../environments/environment';
 import {Observable} from 'rxjs/internal/Observable';
 import {ContactListResponse} from '../models/contact-list-response';
 import {ContactResponse} from '../models/contact-response';
-import {ContactStatus} from '../enums/contactStatus';
+import {ContactStatus} from '../pages/personnel/enums/contact-status';
 import {ApiResponse} from '../models/api-response';
 
 @Injectable()

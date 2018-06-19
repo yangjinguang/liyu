@@ -1,4 +1,6 @@
 /* You can add global styles to this file, and also import other style files */
+@import "theme";
+
 *, ::after, ::before {
     box-sizing: border-box;
     outline: none;
@@ -9,10 +11,30 @@
     flex-direction: column;
     padding: 20px;
     &-filter {
-        margin-bottom: 10px;
+        margin-bottom: 20px;
+        display: flex;
+        .clf-item {
+            display: flex;
+            align-content: center;
+            &:not(:last-child) {
+                margin-right: 20px;
+            }
+            &-label {
+                padding: 5px 0;
+                margin-right: 10px;
+                color: @text-color-secondary;
+            }
+            &-control {
+            }
+        }
+        .clf-btns {
+            flex: 1;
+            display: flex;
+            justify-content: flex-end;
+        }
     }
     &-header {
-        margin-bottom: 10px;
+        margin-bottom: 20px;
     }
     &-table {
         flex: 1;

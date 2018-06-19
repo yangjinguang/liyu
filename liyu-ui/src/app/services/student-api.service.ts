@@ -4,6 +4,7 @@ import {environment} from '../../environments/environment';
 import {Observable} from 'rxjs/internal/Observable';
 import {StudentListResponse} from '../models/student-list-response';
 import {StudentResponse} from '../models/student-response';
+import {StudentStatus} from '../pages/personnel/enums/student-status';
 
 @Injectable()
 export class StudentApiService {
@@ -13,8 +14,8 @@ export class StudentApiService {
         this.baseUrl = environment.studentApi;
     }
 
-    public list(page: number, size: number, searchText?: string): Observable<StudentListResponse> {
-        return this.http.get(this.baseUrl, {page: page, size: size, searchText: searchText});
+    public list(searchData?: object): Observable<StudentListResponse> {
+        return this.http.get(this.baseUrl, searchData);
     }
 
     public create(postData: object): Observable<StudentResponse> {
@@ -27,5 +28,9 @@ export class StudentApiService {
 
     public detail(studentId: string): Observable<StudentResponse> {
         return this.http.get(`${this.baseUrl}/${studentId}`);
+    }
+
+    public changeStatus(studentId: string, status: StudentStatus): Observable<StudentResponse> {
+        return this.http.put(`${this.baseUrl}/${studentId}`, {status: status});
     }
 }

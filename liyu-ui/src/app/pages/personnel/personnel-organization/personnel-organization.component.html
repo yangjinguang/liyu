@@ -8,14 +8,14 @@
         </button>
     </div>
     <div class="common-list-table">
-        <nz-table #basicTable [nzData]="organizations">
+        <nz-table #basicTable [nzLoading]="isLoading" [nzData]="organizations">
             <thead>
             <tr>
                 <th>班级</th>
                 <th>年级</th>
                 <th>教师</th>
                 <th>幼儿人数</th>
-                <th>操作</th>
+                <th nzWidth="120px">操作</th>
             </tr>
             </thead>
             <tbody>
@@ -24,7 +24,7 @@
                 <td>{{data.gradeName}}</td>
                 <td>{{data.contactNameTitle}}</td>
                 <td>{{data.studentCount}}</td>
-                <td>
+                <td nzWidth="120px">
                     <a (click)="organizationCreateModalOpen(data)">编辑</a>
                     <nz-divider nzType="vertical"></nz-divider>
                     <a (click)="organizationDelete(data)">删除</a>

@@ -7,9 +7,9 @@ import java.util.List;
 
 public interface StudentService {
 
-    Integer count(String tenantId, String organizationId);
+    Integer count(String tenantId, String organizationId,String name,String phone);
 
-    List<Student> query(String tenantId, String organizationId, Integer offset, Integer size);
+    List<Student> query(String tenantId, Integer offset, Integer size,String organizationId,String name,String phone);
 
     Student create(Student newStudent);
 

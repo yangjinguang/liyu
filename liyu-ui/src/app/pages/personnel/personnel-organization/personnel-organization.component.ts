@@ -17,6 +17,7 @@ export class PersonnelOrganizationComponent implements OnInit {
     public page: number;
     public total: number;
     public size: 20;
+    public isLoading: boolean;
 
     constructor(private bcService: XBreadCrumbService,
                 private msg: NzMessageService,
@@ -40,10 +41,12 @@ export class PersonnelOrganizationComponent implements OnInit {
     }
 
     private getOrganizationList(page: number) {
+        this.isLoading = true;
         this.organizationApi.list(page, this.size).subscribe(result => {
             this.organizations = result.data.list;
             this.total = result.data.pagination.total;
             this.page = result.data.pagination.page;
+            this.isLoading = false;
         });
     }
 

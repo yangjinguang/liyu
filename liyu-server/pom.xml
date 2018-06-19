@@ -127,6 +127,11 @@
                                     <enumConverter>true</enumConverter>
                                     <expression>.*.contact.gender</expression>
                                 </forcedType>
+                                <forcedType>
+                                    <userType>com.liyu.server.enums.GenderEnum</userType>
+                                    <enumConverter>true</enumConverter>
+                                    <expression>.*.student.gender</expression>
+                                </forcedType>
                             </forcedTypes>
                         </database>
                         <target>

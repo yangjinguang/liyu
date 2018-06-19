@@ -40,6 +40,7 @@ export class PersonnelStudentCreateModalComponent implements OnInit {
         this.studentForm = this.fb.group({
             studentId: [this.student && this.student.studentId],
             name: [this.student && this.student.name, Validators.required],
+            gender: [this.student && this.student.gender, Validators.required],
             phone: [this.student && this.student.phone, Validators.required],
             birthday: [this.student && this.student.birthday],
             organizationId: [this.student && this.student.organizationId, Validators.required]

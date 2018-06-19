@@ -101,6 +101,7 @@ CREATE TABLE `student` (
   `id` bigint(20) unsigned NOT NULL AUTO_INCREMENT COMMENT 'ID',
   `student_id` varchar(45) NOT NULL DEFAULT '' COMMENT '学生ID',
   `name` varchar(255) DEFAULT '' COMMENT '姓名',
+  `gender` tinyint(4) DEFAULT '0' COMMENT '性别',
   `phone` varchar(255) DEFAULT '' COMMENT '家长手机号',
   `avatar` varchar(255) DEFAULT '' COMMENT '头像Url',
   `profile_id` varchar(255) DEFAULT '' COMMENT '学生详细资料,对应Mongo student_profile表',
