@@ -1,0 +1,49 @@
+<form nz-form [formGroup]="studentForm">
+    <nz-form-item>
+        <nz-form-label [nzSpan]="5" [nzRequired]="true">姓名</nz-form-label>
+        <nz-form-control [nzSpan]="12">
+            <input nz-input formControlName="name">
+            <nz-form-explain *ngIf="studentForm.get('name').dirty && studentForm.get('name').errors">
+                必填
+            </nz-form-explain>
+        </nz-form-control>
+    </nz-form-item>
+    <nz-form-item>
+        <nz-form-label [nzSpan]="5" [nzRequired]="true">家长手机号</nz-form-label>
+        <nz-form-control [nzSpan]="12">
+            <input nz-input formControlName="phone">
+            <nz-form-explain *ngIf="studentForm.get('phone').dirty && studentForm.get('phone').errors">
+                必填
+            </nz-form-explain>
+        </nz-form-control>
+    </nz-form-item>
+    <nz-form-item>
+        <nz-form-label [nzSpan]="5">出生日期</nz-form-label>
+        <nz-form-control [nzSpan]="12">
+            <nz-date-picker formControlName="birthday" nzDisabledTime></nz-date-picker>
+        </nz-form-control>
+    </nz-form-item>
+    <nz-form-item>
+        <nz-form-label [nzSpan]="5" [nzRequired]="true">班级</nz-form-label>
+        <nz-form-control [nzSpan]="12">
+            <nz-select style="width: 200px;"
+                       nzShowSearch
+                       nzAllowClear
+                       [nzServerSearch]="true"
+                       (nzOnSearch)="organizationSearch($event)"
+                       (nzScrollToBottom)="loadMore()"
+                       formControlName="organizationId">
+                <ng-container *ngFor="let org of organizations">
+                    <nz-option *ngIf="!isLoading" [nzLabel]="org.name" [nzValue]="org.organizationId"></nz-option>
+                </ng-container>
+                <nz-option *ngIf="isLoading" nzDisabled nzCustomContent>
+                    <i class="anticon anticon-loading anticon-spin loading-icon"></i> Loading Data...
+                </nz-option>
+            </nz-select>
+            <nz-form-explain
+                *ngIf="studentForm.get('organizationId').dirty && studentForm.get('organizationId').errors">
+                必填
+            </nz-form-explain>
+        </nz-form-control>
+    </nz-form-item>
+</form>
