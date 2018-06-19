@@ -43,6 +43,7 @@ public class ContactServiceImpl implements ContactService {
     public List<Contact> listByTenantId(String tenantId, Integer offset, Integer size, String searchText) {
         HashSet<Condition> conditions = new HashSet<>();
         conditions.add(CONTACT.TENANT_ID.eq(tenantId));
+        conditions.add(CONTACT.STATUS.notEqual(ContactStatusEnum.DELETED));
         if (searchText != null && !searchText.isEmpty()) {
             conditions.add(CONTACT.NAME.like("%" + searchText + "%").or(CONTACT.EMAIL.like("%" + searchText + "%").or(CONTACT.PHONE.like("%" + searchText + "%"))));
         }
@@ -105,6 +106,10 @@ public class ContactServiceImpl implements ContactService {
         String roleId = newContact.getRoleId();
         if (roleId != null && !roleId.isEmpty()) {
             contactRecord.setRoleId(roleId);
+        }
+        ContactStatusEnum status = newContact.getStatus();
+        if (status != null) {
+            contactRecord.setStatus(status);
         }
         contactRecord.update();
         return contactRecord.into(Contact.class);

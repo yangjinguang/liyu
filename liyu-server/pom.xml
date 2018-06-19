@@ -98,10 +98,6 @@
                                 </forcedType>
                                 <forcedType>
                                     <name>BOOLEAN</name>
-                                    <expression>.*.student.enabled</expression>
-                                </forcedType>
-                                <forcedType>
-                                    <name>BOOLEAN</name>
                                     <expression>.*.role.enabled</expression>
                                 </forcedType>
                                 <forcedType>
@@ -120,6 +116,11 @@
                                     <userType>com.liyu.server.enums.ContactStatusEnum</userType>
                                     <enumConverter>true</enumConverter>
                                     <expression>.*.contact.status</expression>
+                                </forcedType>
+                                <forcedType>
+                                    <userType>com.liyu.server.enums.StudentStatusEnum</userType>
+                                    <enumConverter>true</enumConverter>
+                                    <expression>.*.student.status</expression>
                                 </forcedType>
                                 <forcedType>
                                     <userType>com.liyu.server.enums.GenderEnum</userType>

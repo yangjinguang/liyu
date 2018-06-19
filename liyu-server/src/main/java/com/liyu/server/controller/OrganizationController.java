@@ -31,18 +31,15 @@ public class OrganizationController {
     @Resource
     private ContactService contactService;
 
-    @ApiOperation(value = "获取组织列表", notes = "")
-    @ApiImplicitParams({
-            @ApiImplicitParam(name = "page", value = "页码", required = false, dataType = "int", paramType = "query"),
-            @ApiImplicitParam(name = "size", value = "每页条数", required = false, dataType = "int", paramType = "query")
-    })
+    @ApiOperation(value = "获取组织详细列表", notes = "")
     @RequestMapping(value = "", method = RequestMethod.GET)
     public APIResponse list(@RequestHeader(value = "X-TENANT-ID") String tenantId,
                             @RequestParam(value = "page", required = false, defaultValue = "1") Integer page,
-                            @RequestParam(value = "size", required = false, defaultValue = "20") Integer size) {
+                            @RequestParam(value = "size", required = false, defaultValue = "20") Integer size,
+                            @RequestParam(value = "searchText", required = false) String searchText) {
         log.info("tenantId: " + tenantId);
-        Integer total = organizationService.countByTenantId(tenantId);
-        List<OrganizationExtend> organizationExtends = organizationService.listByTenantId(tenantId, (page - 1) * size, size);
+        Integer total = organizationService.countByTenantId(tenantId, searchText);
+        List<OrganizationExtend> organizationExtends = organizationService.listByTenantId(tenantId, (page - 1) * size, size, searchText);
         ArrayList<OrganizationDetail> organizationDetails = new ArrayList<>();
         for (OrganizationExtend organizationExtend : organizationExtends) {
             OrganizationDetail organizationDetail = new OrganizationDetail(organizationExtend);
@@ -59,6 +56,18 @@ public class OrganizationController {
             organizationDetails.add(organizationDetail);
         }
         return APIResponse.withPagination(organizationDetails, total, page, size);
+    }
+
+    @ApiOperation(value = "获取组织详细列表", notes = "")
+    @RequestMapping(value = "/mini", method = RequestMethod.GET)
+    public APIResponse miniList(@RequestHeader(value = "X-TENANT-ID") String tenantId,
+                                @RequestParam(value = "page", required = false, defaultValue = "1") Integer page,
+                                @RequestParam(value = "size", required = false, defaultValue = "20") Integer size,
+                                @RequestParam(value = "searchText", required = false) String searchText) {
+        log.info("tenantId: " + tenantId);
+        Integer total = organizationService.countByTenantId(tenantId, searchText);
+        List<Organization> organizations = organizationService.miniListByTenantId(tenantId, (page - 1) * size, size, searchText);
+        return APIResponse.withPagination(organizations, total, page, size);
     }
 
     @ApiOperation(value = "获取组织详情", notes = "")

@@ -1,10 +1,10 @@
 import {Injectable} from '@angular/core';
-import {AppHttpClient} from "../libs/http/http-client";
-import {environment} from "../../environments/environment";
-import {Observable} from "rxjs/internal/Observable";
-import {OrganizationListResponse} from "../models/organization-list-response";
-import {OrganizationResponse} from "../models/organization-response";
-import {ApiResponse} from "../models/api-response";
+import {AppHttpClient} from '../libs/http/http-client';
+import {environment} from '../../environments/environment';
+import {Observable} from 'rxjs/internal/Observable';
+import {OrganizationListResponse} from '../models/organization-list-response';
+import {OrganizationResponse} from '../models/organization-response';
+import {ApiResponse} from '../models/api-response';
 
 @Injectable()
 export class OrganizationApiService {
@@ -14,8 +14,12 @@ export class OrganizationApiService {
         this.baseUrl = environment.organizationApi;
     }
 
-    public list(page: number, size: number): Observable<OrganizationListResponse> {
-        return this.http.get(this.baseUrl, {page: page, size: size});
+    public list(page: number, size: number, searchText?: string): Observable<OrganizationListResponse> {
+        return this.http.get(this.baseUrl, {page: page, size: size, searchText: searchText});
+    }
+
+    public miniList(page: number, size: number, searchText?: string): Observable<OrganizationListResponse> {
+        return this.http.get(`${this.baseUrl}/mini`, {page: page, size: size, searchText: searchText});
     }
 
     public create(postData: object): Observable<OrganizationResponse> {

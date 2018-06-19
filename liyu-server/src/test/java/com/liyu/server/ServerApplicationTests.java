@@ -64,12 +64,33 @@ public class ServerApplicationTests {
         newAccount.setWxOpenId("");
         Account account = accountService.create(newAccount);
 
+        // 创建角色
+        Role newRole = new Role();
+        newRole.setRoleId("teacher-1");
+        newRole.setName("老师");
+        newRole.setTenantId("root");
+        newRole.setLocked(true);
+        Role role = roleService.create(newRole);
+
+        newRole.setRoleId("teacher-2");
+        newRole.setName("班主任老师");
+        newRole.setTenantId("root");
+        newRole.setLocked(true);
+        roleService.create(newRole);
+
+        newRole.setRoleId("teacher-3");
+        newRole.setName("生活老师");
+        newRole.setTenantId("root");
+        newRole.setLocked(true);
+        roleService.create(newRole);
+
         // 创建联系人
         Contact newContact = new Contact();
         newContact.setAccountId(account.getAccountId());
         newContact.setName("杨");
         newContact.setEmail("yang@ly.com");
         newContact.setPhone("10000000000");
+        newContact.setRoleId(role.getRoleId());
         newContact.setTenantId(tenant.getTenantId());
         Contact contact = contactService.create(newContact, account.getAccountId(), tenant.getTenantId());
 
@@ -99,25 +120,6 @@ public class ServerApplicationTests {
         newGrade.setName("学前班");
         newGrade.setLevel(4);
         gradeService.create(newGrade);
-
-        Role newRole = new Role();
-        newRole.setRoleId("teacher-1");
-        newRole.setName("老师");
-        newRole.setTenantId("root");
-        newRole.setLocked(true);
-        roleService.create(newRole);
-
-        newRole.setRoleId("teacher-2");
-        newRole.setName("班主任老师");
-        newRole.setTenantId("root");
-        newRole.setLocked(true);
-        roleService.create(newRole);
-
-        newRole.setRoleId("teacher-3");
-        newRole.setName("生活老师");
-        newRole.setTenantId("root");
-        newRole.setLocked(true);
-        roleService.create(newRole);
 
     }
 

@@ -8,6 +8,7 @@ import com.liyu.server.tables.pojos.Organization;
 import com.liyu.server.tables.records.OrganizationRecord;
 import com.liyu.server.utils.CommonUtils;
 import lombok.extern.slf4j.Slf4j;
+import org.jooq.Condition;
 import org.jooq.DSLContext;
 import org.jooq.exception.NoDataFoundException;
 import org.jooq.types.ULong;
@@ -37,12 +38,31 @@ public class OrganizationServiceImpl implements OrganizationService {
     }
 
     @Override
-    public Integer countByTenantId(String tenantId) {
-        return context.selectCount().from(ORGANIZATION).where(ORGANIZATION.TENANT_ID.eq(tenantId)).fetchOne().into(int.class);
+    public Organization byOrganizationId(String orginaizationId) {
+        return context.selectFrom(ORGANIZATION)
+                .where(ORGANIZATION.ORGANIZATION_ID.eq(orginaizationId))
+                .fetchOptional()
+                .orElseThrow(() -> new NoDataFoundException("organization not found"))
+                .into(Organization.class);
     }
 
     @Override
-    public List<OrganizationExtend> listByTenantId(String tenantId, Integer offset, Integer limit) {
+    public Integer countByTenantId(String tenantId, String searchText) {
+        HashSet<Condition> conditions = new HashSet<>();
+        conditions.add(ORGANIZATION.TENANT_ID.eq(tenantId));
+        if (searchText != null && !searchText.isEmpty()) {
+            conditions.add(ORGANIZATION.NAME.like("%" + searchText + "%"));
+        }
+        return context.selectCount().from(ORGANIZATION).where(conditions).fetchOne().into(int.class);
+    }
+
+    @Override
+    public List<OrganizationExtend> listByTenantId(String tenantId, Integer offset, Integer limit, String searchText) {
+        HashSet<Condition> conditions = new HashSet<>();
+        conditions.add(ORGANIZATION.TENANT_ID.eq(tenantId));
+        if (searchText != null && !searchText.isEmpty()) {
+            conditions.add(ORGANIZATION.NAME.like("%" + searchText + "%"));
+        }
         return context.select(
                 ORGANIZATION.ID,
                 ORGANIZATION.ORGANIZATION_ID,
@@ -52,20 +72,33 @@ public class OrganizationServiceImpl implements OrganizationService {
                 ORGANIZATION.ENABLED,
                 ORGANIZATION.GRADE_ID,
                 GRADE.NAME,
-                STUDENT.ID.count(),
+                context.selectCount().from(STUDENT).where(STUDENT.ORGANIZATION_ID.eq(ORGANIZATION.ORGANIZATION_ID)).asField("student_count"),
                 ORGANIZATION.TENANT_ID,
                 ORGANIZATION.CREATED_AT,
                 ORGANIZATION.UPDATED_AT
         ).from(ORGANIZATION)
                 .leftJoin(GRADE)
                 .on(GRADE.GRADE_ID.eq(ORGANIZATION.GRADE_ID))
-                .leftJoin(STUDENT)
-                .on(STUDENT.ORGANIZATION_ID.eq(ORGANIZATION.ORGANIZATION_ID))
-                .where(ORGANIZATION.TENANT_ID.eq(tenantId))
+                .where(conditions)
                 .offset(offset)
                 .limit(limit)
                 .fetch()
                 .into(OrganizationExtend.class);
+    }
+
+    @Override
+    public List<Organization> miniListByTenantId(String tenantId, Integer offset, Integer limit, String searchText) {
+        HashSet<Condition> conditions = new HashSet<>();
+        conditions.add(ORGANIZATION.TENANT_ID.eq(tenantId));
+        if (searchText != null && !searchText.isEmpty()) {
+            conditions.add(ORGANIZATION.NAME.like("%" + searchText + "%"));
+        }
+        return context.selectFrom(ORGANIZATION)
+                .where(conditions)
+                .offset(offset)
+                .limit(limit)
+                .fetch()
+                .into(Organization.class);
     }
 
     @Override

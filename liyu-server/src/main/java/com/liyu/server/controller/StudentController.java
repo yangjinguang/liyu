@@ -1,7 +1,10 @@
 package com.liyu.server.controller;
 
+import com.liyu.server.model.StudentDetail;
 import com.liyu.server.model.StudentProfile;
+import com.liyu.server.service.OrganizationService;
 import com.liyu.server.service.StudentService;
+import com.liyu.server.tables.pojos.Organization;
 import com.liyu.server.tables.pojos.Student;
 import com.liyu.server.utils.APIResponse;
 import io.swagger.annotations.Api;
@@ -9,6 +12,7 @@ import io.swagger.annotations.ApiOperation;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
+import java.util.ArrayList;
 import java.util.List;
 
 @Api(value = "学生", description = "学生操作", tags = {"学生接口"})
@@ -17,6 +21,8 @@ import java.util.List;
 public class StudentController {
     @Resource
     private StudentService studentService;
+    @Resource
+    private OrganizationService organizationService;
 
     @ApiOperation(value = "学生综合查询")
     @RequestMapping(value = "", method = RequestMethod.GET)
@@ -26,19 +32,32 @@ public class StudentController {
                              @RequestParam(value = "size", defaultValue = "20") Integer size) {
         Integer count = studentService.count(tenantId, organizationId);
         List<Student> students = studentService.query(tenantId, organizationId, (page - 1) * size, size);
-        return APIResponse.withPagination(students, count, page, size);
+        ArrayList<StudentDetail> studentDetails = new ArrayList<>();
+        for (Student student : students) {
+            StudentDetail studentDetail = new StudentDetail(student);
+            try {
+                Organization organization = organizationService.byOrganizationId(student.getOrganizationId());
+                studentDetail.setOrganization(organization);
+            } catch (Exception e) {
+
+            }
+            studentDetails.add(studentDetail);
+        }
+        return APIResponse.withPagination(studentDetails, count, page, size);
     }
 
     @ApiOperation(value = "创建学生")
     @RequestMapping(value = "", method = RequestMethod.POST)
-    public APIResponse create(@RequestBody Student newStudent) {
+    public APIResponse create(@RequestHeader(value = "X-TENANT-ID") String tenantId,
+                              @RequestBody Student newStudent) {
+        newStudent.setTenantId(tenantId);
         Student student = studentService.create(newStudent);
         return APIResponse.success(student);
     }
 
     @ApiOperation(value = "更新学生信息")
     @RequestMapping(value = "/{studentId}", method = RequestMethod.PUT)
-    public APIResponse create(@PathVariable(value = "studentId") String studentId,
+    public APIResponse update(@PathVariable(value = "studentId") String studentId,
                               @RequestBody Student newStudent) {
         Student student = studentService.update(studentId, newStudent);
         return APIResponse.success(student);

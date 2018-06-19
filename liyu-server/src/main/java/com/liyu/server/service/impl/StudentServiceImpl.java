@@ -14,6 +14,7 @@ import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
+import java.sql.Timestamp;
 import java.util.HashSet;
 import java.util.List;
 
@@ -66,21 +67,25 @@ public class StudentServiceImpl implements StudentService {
         return context.insertInto(STUDENT)
                 .columns(
                         STUDENT.STUDENT_ID,
+                        STUDENT.NAME,
+                        STUDENT.PHONE,
                         STUDENT.AVATAR,
+                        STUDENT.BIRTHDAY,
                         STUDENT.ORGANIZATION_ID,
                         STUDENT.PROFILE_ID,
                         STUDENT.TENANT_ID,
-                        STUDENT.NAME,
-                        STUDENT.ENABLED
+                        STUDENT.STATUS
                 )
                 .values(
                         CommonUtils.UUIDGenerator(),
+                        newStudent.getName(),
+                        newStudent.getPhone(),
                         newStudent.getAvatar(),
+                        newStudent.getBirthday(),
                         newStudent.getOrganizationId(),
                         newStudent.getProfileId(),
                         newStudent.getTenantId(),
-                        newStudent.getName(),
-                        true
+                        newStudent.getStatus()
                 ).returning()
                 .fetchOne()
                 .into(Student.class);
@@ -96,9 +101,17 @@ public class StudentServiceImpl implements StudentService {
         if (name != null && !name.isEmpty()) {
             studentRecord.setName(name);
         }
+        String phone = newStudent.getPhone();
+        if (phone != null && !phone.isEmpty()) {
+            studentRecord.setPhone(phone);
+        }
         String avatar = newStudent.getAvatar();
         if (avatar != null && !avatar.isEmpty()) {
             studentRecord.setAvatar(avatar);
+        }
+        Timestamp birthday = newStudent.getBirthday();
+        if (birthday != null) {
+            studentRecord.setBirthday(birthday);
         }
         String profileId = newStudent.getProfileId();
         if (profileId != null && !profileId.isEmpty()) {

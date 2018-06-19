@@ -6,6 +6,7 @@ import {FormGroup} from '@angular/forms';
 import {ContactApiService} from '../../../services/contact-api.service';
 import {RoleApiService} from '../../../services/role-api.service';
 import {Role} from '../../../models/role';
+import {ContactStatus} from '../../../enums/contactStatus';
 
 @Component({
     selector: 'app-personnel-contact',
@@ -95,5 +96,17 @@ export class PersonnelContactComponent implements OnInit {
                 this.msg.success('创建成功');
             });
         }
+    }
+
+    public contactDelete(contact: Contact) {
+        this.modalService.confirm({
+            nzTitle: '确定要删除此员工吗?',
+            nzOnOk: () => {
+                this.contactApi.changeStatus(contact.contactId, ContactStatus.DELETED).subscribe(result => {
+                    this.getContactList(this.page);
+                    this.msg.success('删除成功');
+                });
+            }
+        });
     }
 }

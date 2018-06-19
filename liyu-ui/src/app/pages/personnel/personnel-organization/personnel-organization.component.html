@@ -4,7 +4,7 @@
         <button nz-button [nzType]="'primary'"
                 (click)="organizationCreateModalOpen()">
             <i class="anticon anticon-plus"></i>
-            新建班级
+            添加班级
         </button>
     </div>
     <div class="common-list-table">
@@ -27,7 +27,7 @@
                 <td>
                     <a (click)="organizationCreateModalOpen(data)">编辑</a>
                     <nz-divider nzType="vertical"></nz-divider>
-                    <a>删除</a>
+                    <a (click)="organizationDelete(data)">删除</a>
                 </td>
             </tr>
             </tbody>

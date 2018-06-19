@@ -1,3 +1,38 @@
-<p>
-  personnel-student works!
-</p>
+<div class="personnel-contact common-list">
+    <!--<div class="common-list-filter"></div>-->
+    <div class="common-list-header">
+        <button nz-button [nzType]="'primary'"
+                (click)="studentCreateModalOpen()">
+            <i class="anticon anticon-plus"></i>
+            添加幼儿
+        </button>
+    </div>
+    <div class="common-list-table">
+        <nz-table #basicTable [nzData]="students">
+            <thead>
+            <tr>
+                <th>姓名</th>
+                <th>家长手机号</th>
+                <th>所在班级</th>
+                <th>出生日期</th>
+                <th>状态</th>
+                <th>操作</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr *ngFor="let data of basicTable.data">
+                <td>{{data.name}}</td>
+                <td>{{data.phone}}</td>
+                <td>{{data.organization.name}}</td>
+                <td>{{data.birthday|date:'yyyy-MM-dd'}}</td>
+                <td>{{data.status}}</td>
+                <td>
+                    <a (click)="studentCreateModalOpen(data)">编辑</a>
+                    <nz-divider nzType="vertical"></nz-divider>
+                    <a (click)="studentDelete(data)">删除</a>
+                </td>
+            </tr>
+            </tbody>
+        </nz-table>
+    </div>
+</div>

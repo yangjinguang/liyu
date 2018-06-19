@@ -82,7 +82,6 @@ export class PersonnelOrganizationComponent implements OnInit {
             contactIds: organizationForm.get('contactIds').value,
         };
         const organizationId = organizationForm.get('organizationId').value;
-        console.log(postData)
         if (organizationId) {
             this.organizationApi.update(organizationId, postData).subscribe(result => {
                 this.msg.success('更新成功');
@@ -98,4 +97,15 @@ export class PersonnelOrganizationComponent implements OnInit {
         }
     }
 
+    public organizationDelete(organization: Organization) {
+        this.modalService.confirm({
+            nzTitle: '确定要删除此班级吗？',
+            nzOnOk: () => {
+                this.organizationApi.delete(organization.organizationId).subscribe(result => {
+                    this.getOrganizationList(this.page);
+                    this.msg.success('删除成功');
+                });
+            }
+        });
+    }
 }

@@ -5,6 +5,7 @@ import {Observable} from 'rxjs/internal/Observable';
 import {ContactListResponse} from '../models/contact-list-response';
 import {ContactResponse} from '../models/contact-response';
 import {ContactStatus} from '../enums/contactStatus';
+import {ApiResponse} from '../models/api-response';
 
 @Injectable()
 export class ContactApiService {
@@ -18,7 +19,7 @@ export class ContactApiService {
         return this.http.get(`${this.baseUrl}/profile`);
     }
 
-    public list(page: number, size: number, searchText: string): Observable<ContactListResponse> {
+    public list(page: number, size: number, searchText?: string): Observable<ContactListResponse> {
         return this.http.get(this.baseUrl, {page: page, size: size, searchText: searchText});
     }
 
@@ -34,8 +35,7 @@ export class ContactApiService {
         return this.http.get(`${this.baseUrl}/${id}`);
     }
 
-    public changeStatus(id: number, status: ContactStatus): Observable<ContactResponse> {
-        return this.http.put(`${this.baseUrl}/${id}`, {status: status});
+    public changeStatus(contactId: string, status: ContactStatus): Observable<ContactResponse> {
+        return this.http.put(`${this.baseUrl}/${contactId}`, {status: status});
     }
-
 }
