@@ -7,9 +7,9 @@ import org.jooq.types.ULong;
 import java.util.List;
 
 public interface ContactService {
-    Integer countByTenantId(String tenantId, String searchText);
+    Integer countByTenantId(String tenantId, String searchText, String name, String phone, String organizationId);
 
-    List<Contact> listByTenantId(String tenantId, Integer offset, Integer size, String searchText);
+    List<Contact> listByTenantId(String tenantId, Integer offset, Integer size, String searchText, String name, String phone, String organizationId);
 
     Contact create(Contact newContact, String accountId, String tenantId);
 

@@ -32,7 +32,7 @@ export class PersonnelStudentCreateModalComponent implements OnInit {
         this.studentFormBuild();
         this.searchChange$.asObservable().pipe(debounceTime(500)).subscribe(result => {
             this.searchText = result;
-            this.getOrganizationList(1, result);
+            this.getOrganizationList(1);
         });
     }
 
@@ -47,8 +47,12 @@ export class PersonnelStudentCreateModalComponent implements OnInit {
         });
     }
 
-    private getOrganizationList(page: number, searchText?: string) {
-        this.organizationApi.miniList(page, this.size, searchText).subscribe(result => {
+    private getOrganizationList(page: number, searchData?: object) {
+        searchData = searchData || {};
+        searchData['page'] = this.page;
+        searchData['size'] = this.size;
+        searchData['searchText'] = this.searchText;
+        this.organizationApi.miniList(searchData).subscribe(result => {
             this.organizations = this.organizations.concat(result.data.list);
             this.total = result.data.pagination.total;
             this.isLoading = false;
@@ -66,6 +70,6 @@ export class PersonnelStudentCreateModalComponent implements OnInit {
             return;
         }
         this.isLoading = true;
-        this.getOrganizationList(this.page + 1, this.searchText);
+        this.getOrganizationList(this.page + 1);
     }
 }

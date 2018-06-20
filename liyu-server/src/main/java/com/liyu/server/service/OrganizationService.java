@@ -19,7 +19,7 @@ public interface OrganizationService {
 
     Organization byOrganizationId(String orginaizationId);
 
-    Integer countByTenantId(String tenantId, String searchText);
+    Integer countByTenantId(String tenantId, String searchText, String name, String gradeId);
 
     /**
      * 根据租户ID获取组织列表
@@ -27,9 +27,9 @@ public interface OrganizationService {
      * @param tenantId 租户ID
      * @return List<Organization>
      */
-    List<OrganizationExtend> listByTenantId(String tenantId, Integer offset, Integer limit, String searchText);
+    List<OrganizationExtend> listByTenantId(String tenantId, Integer offset, Integer limit, String searchText, String name, String gradeId);
 
-    List<Organization> miniListByTenantId(String tenantId, Integer offset, Integer limit, String searchText);
+    List<Organization> miniListByTenantId(String tenantId, Integer offset, Integer limit, String searchText,String name, String gradeId);
 
     /**
      * 创建新组织

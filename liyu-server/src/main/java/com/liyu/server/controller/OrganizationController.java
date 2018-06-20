@@ -36,10 +36,12 @@ public class OrganizationController {
     public APIResponse list(@RequestHeader(value = "X-TENANT-ID") String tenantId,
                             @RequestParam(value = "page", required = false, defaultValue = "1") Integer page,
                             @RequestParam(value = "size", required = false, defaultValue = "20") Integer size,
-                            @RequestParam(value = "searchText", required = false) String searchText) {
+                            @RequestParam(value = "searchText", required = false) String searchText,
+                            @RequestParam(value = "name", required = false) String name,
+                            @RequestParam(value = "gradeId", required = false) String gradeId) {
         log.info("tenantId: " + tenantId);
-        Integer total = organizationService.countByTenantId(tenantId, searchText);
-        List<OrganizationExtend> organizationExtends = organizationService.listByTenantId(tenantId, (page - 1) * size, size, searchText);
+        Integer total = organizationService.countByTenantId(tenantId, searchText, name, gradeId);
+        List<OrganizationExtend> organizationExtends = organizationService.listByTenantId(tenantId, (page - 1) * size, size, searchText, name, gradeId);
         ArrayList<OrganizationDetail> organizationDetails = new ArrayList<>();
         for (OrganizationExtend organizationExtend : organizationExtends) {
             OrganizationDetail organizationDetail = new OrganizationDetail(organizationExtend);
@@ -63,10 +65,12 @@ public class OrganizationController {
     public APIResponse miniList(@RequestHeader(value = "X-TENANT-ID") String tenantId,
                                 @RequestParam(value = "page", required = false, defaultValue = "1") Integer page,
                                 @RequestParam(value = "size", required = false, defaultValue = "20") Integer size,
-                                @RequestParam(value = "searchText", required = false) String searchText) {
+                                @RequestParam(value = "searchText", required = false) String searchText,
+                                @RequestParam(value = "name", required = false) String name,
+                                @RequestParam(value = "gradeId", required = false) String gradeId) {
         log.info("tenantId: " + tenantId);
-        Integer total = organizationService.countByTenantId(tenantId, searchText);
-        List<Organization> organizations = organizationService.miniListByTenantId(tenantId, (page - 1) * size, size, searchText);
+        Integer total = organizationService.countByTenantId(tenantId, searchText, name, gradeId);
+        List<Organization> organizations = organizationService.miniListByTenantId(tenantId, (page - 1) * size, size, searchText, name, gradeId);
         return APIResponse.withPagination(organizations, total, page, size);
     }
 

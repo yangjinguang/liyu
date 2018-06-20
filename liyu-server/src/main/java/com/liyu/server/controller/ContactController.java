@@ -46,9 +46,12 @@ public class ContactController {
             @RequestHeader(value = "X-TENANT-ID") String tenantId,
             @RequestParam(value = "page", required = false, defaultValue = "1") Integer page,
             @RequestParam(value = "size", required = false, defaultValue = "20") Integer size,
-            @RequestParam(value = "searchText", required = false) String searchText) {
-        Integer total = contactService.countByTenantId(tenantId, searchText);
-        List<Contact> contacts = contactService.listByTenantId(tenantId, (page - 1) * size, size, searchText);
+            @RequestParam(value = "searchText", required = false) String searchText,
+            @RequestParam(value = "name", required = false) String name,
+            @RequestParam(value = "phone", required = false) String phone,
+            @RequestParam(value = "organizationId", required = false) String organizationId) {
+        Integer total = contactService.countByTenantId(tenantId, searchText, name, phone, organizationId);
+        List<Contact> contacts = contactService.listByTenantId(tenantId, (page - 1) * size, size, searchText, name, phone, organizationId);
         ArrayList<ContactDetail> contactDetails = new ArrayList<>();
         for (Contact contact : contacts) {
             ContactDetail contactDetail = new ContactDetail(contact);

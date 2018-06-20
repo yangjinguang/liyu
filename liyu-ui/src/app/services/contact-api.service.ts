@@ -19,8 +19,8 @@ export class ContactApiService {
         return this.http.get(`${this.baseUrl}/profile`);
     }
 
-    public list(page: number, size: number, searchText?: string): Observable<ContactListResponse> {
-        return this.http.get(this.baseUrl, {page: page, size: size, searchText: searchText});
+    public list(searchData?: Object): Observable<ContactListResponse> {
+        return this.http.get(this.baseUrl, searchData);
     }
 
     public create(postData: object): Observable<ContactResponse> {

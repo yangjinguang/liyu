@@ -9,7 +9,6 @@ import com.liyu.server.utils.CommonUtils;
 import org.jooq.Condition;
 import org.jooq.DSLContext;
 import org.jooq.exception.NoDataFoundException;
-import org.jooq.impl.DSL;
 import org.jooq.types.ULong;
 import org.springframework.stereotype.Service;
 
@@ -26,31 +25,63 @@ public class ContactServiceImpl implements ContactService {
     private DSLContext context;
 
     @Override
-    public Integer countByTenantId(String tenantId, String searchText) {
+    public Integer countByTenantId(String tenantId, String searchText, String name, String phone, String organizationId) {
         HashSet<Condition> conditions = new HashSet<>();
         conditions.add(CONTACT.TENANT_ID.eq(tenantId));
         if (searchText != null && !searchText.isEmpty()) {
             conditions.add(CONTACT.NAME.like("%" + searchText + "%").or(CONTACT.EMAIL.like("%" + searchText + "%").or(CONTACT.PHONE.like("%" + searchText + "%"))));
         }
-        return context.selectCount().from(CONTACT)
-                .where(conditions)
-                .fetchOne()
-                .into(int.class);
-
+        if (name != null && !name.isEmpty()) {
+            conditions.add(CONTACT.NAME.like("%" + name + "%"));
+        }
+        if (phone != null && !phone.isEmpty()) {
+            conditions.add(CONTACT.PHONE.like("%" + phone + "%"));
+        }
+        if (organizationId != null && !organizationId.isEmpty()) {
+            conditions.add(ORGANIZATION_CONTACT.ORGANIZATION_ID.eq(organizationId));
+            return context.selectCount().from(ORGANIZATION_CONTACT)
+                    .leftJoin(CONTACT)
+                    .on(CONTACT.CONTACT_ID.eq(ORGANIZATION_CONTACT.CONTACT_ID))
+                    .where(conditions)
+                    .fetchOne()
+                    .into(int.class);
+        } else {
+            return context.selectCount().from(CONTACT)
+                    .where(conditions)
+                    .fetchOne()
+                    .into(int.class);
+        }
     }
 
     @Override
-    public List<Contact> listByTenantId(String tenantId, Integer offset, Integer size, String searchText) {
+    public List<Contact> listByTenantId(String tenantId, Integer offset, Integer size, String searchText, String name, String phone, String organizationId) {
         HashSet<Condition> conditions = new HashSet<>();
         conditions.add(CONTACT.TENANT_ID.eq(tenantId));
         conditions.add(CONTACT.STATUS.notEqual(ContactStatusEnum.DELETED));
         if (searchText != null && !searchText.isEmpty()) {
             conditions.add(CONTACT.NAME.like("%" + searchText + "%").or(CONTACT.EMAIL.like("%" + searchText + "%").or(CONTACT.PHONE.like("%" + searchText + "%"))));
         }
-        return context.selectFrom(CONTACT)
-                .where(conditions)
-                .fetch()
-                .into(Contact.class);
+        if (name != null && !name.isEmpty()) {
+            conditions.add(CONTACT.NAME.like("%" + name + "%"));
+        }
+        if (phone != null && !phone.isEmpty()) {
+            conditions.add(CONTACT.PHONE.like("%" + phone + "%"));
+        }
+        if (organizationId != null && !organizationId.isEmpty()) {
+            conditions.add(ORGANIZATION_CONTACT.ORGANIZATION_ID.eq(organizationId));
+            return context.select(CONTACT.fields()).from(ORGANIZATION_CONTACT)
+                    .leftJoin(CONTACT)
+                    .on(ORGANIZATION_CONTACT.CONTACT_ID.eq(CONTACT.CONTACT_ID))
+                    .where(conditions)
+                    .fetch()
+                    .into(Contact.class);
+        } else {
+            return context.selectFrom(CONTACT)
+                    .where(conditions)
+                    .fetch()
+                    .into(Contact.class);
+        }
+
     }
 
     @Override

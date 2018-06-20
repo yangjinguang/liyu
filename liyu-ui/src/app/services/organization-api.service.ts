@@ -14,8 +14,8 @@ export class OrganizationApiService {
         this.baseUrl = environment.organizationApi;
     }
 
-    public list(page: number, size: number, searchText?: string): Observable<OrganizationListResponse> {
-        return this.http.get(this.baseUrl, {page: page, size: size, searchText: searchText});
+    public list(searchData?: object): Observable<OrganizationListResponse> {
+        return this.http.get(this.baseUrl, searchData);
     }
 
     public miniList(searchData?: object): Observable<OrganizationListResponse> {

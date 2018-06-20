@@ -47,21 +47,33 @@ public class OrganizationServiceImpl implements OrganizationService {
     }
 
     @Override
-    public Integer countByTenantId(String tenantId, String searchText) {
+    public Integer countByTenantId(String tenantId, String searchText, String name, String gradeId) {
         HashSet<Condition> conditions = new HashSet<>();
         conditions.add(ORGANIZATION.TENANT_ID.eq(tenantId));
         if (searchText != null && !searchText.isEmpty()) {
             conditions.add(ORGANIZATION.NAME.like("%" + searchText + "%"));
         }
+        if (name != null && !name.isEmpty()) {
+            conditions.add(ORGANIZATION.NAME.like("%" + name + "%"));
+        }
+        if (gradeId != null && !gradeId.isEmpty()) {
+            conditions.add(ORGANIZATION.GRADE_ID.eq(gradeId));
+        }
         return context.selectCount().from(ORGANIZATION).where(conditions).fetchOne().into(int.class);
     }
 
     @Override
-    public List<OrganizationExtend> listByTenantId(String tenantId, Integer offset, Integer limit, String searchText) {
+    public List<OrganizationExtend> listByTenantId(String tenantId, Integer offset, Integer limit, String searchText, String name, String gradeId) {
         HashSet<Condition> conditions = new HashSet<>();
         conditions.add(ORGANIZATION.TENANT_ID.eq(tenantId));
         if (searchText != null && !searchText.isEmpty()) {
             conditions.add(ORGANIZATION.NAME.like("%" + searchText + "%"));
+        }
+        if (name != null && !name.isEmpty()) {
+            conditions.add(ORGANIZATION.NAME.like("%" + name + "%"));
+        }
+        if (gradeId != null && !gradeId.isEmpty()) {
+            conditions.add(ORGANIZATION.GRADE_ID.eq(gradeId));
         }
         return context.select(
                 ORGANIZATION.ID,
@@ -87,11 +99,17 @@ public class OrganizationServiceImpl implements OrganizationService {
     }
 
     @Override
-    public List<Organization> miniListByTenantId(String tenantId, Integer offset, Integer limit, String searchText) {
+    public List<Organization> miniListByTenantId(String tenantId, Integer offset, Integer limit, String searchText, String name, String gradeId) {
         HashSet<Condition> conditions = new HashSet<>();
         conditions.add(ORGANIZATION.TENANT_ID.eq(tenantId));
         if (searchText != null && !searchText.isEmpty()) {
             conditions.add(ORGANIZATION.NAME.like("%" + searchText + "%"));
+        }
+        if (name != null && !name.isEmpty()) {
+            conditions.add(ORGANIZATION.NAME.like("%" + name + "%"));
+        }
+        if (gradeId != null && !gradeId.isEmpty()) {
+            conditions.add(ORGANIZATION.GRADE_ID.eq(gradeId));
         }
         return context.selectFrom(ORGANIZATION)
                 .where(conditions)

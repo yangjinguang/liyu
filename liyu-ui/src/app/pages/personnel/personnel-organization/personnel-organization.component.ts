@@ -4,27 +4,34 @@ import {Organization} from '../models/organization';
 import {OrganizationApiService} from '../../../services/organization-api.service';
 import {NzMessageService, NzModalRef, NzModalService} from 'ng-zorro-antd';
 import {PersonnelOrganizationCreateModalComponent} from '../components/personnel-organization-create-modal/personnel-organization-create-modal.component';
-import {FormGroup} from '@angular/forms';
+import {FormBuilder, FormGroup} from '@angular/forms';
+import {Grade} from '../models/grade';
+import {GradeApiService} from '../../../services/grade-api.service';
 
 @Component({
     selector: 'app-personnel-organization',
     templateUrl: './personnel-organization.component.html',
     styleUrls: ['./personnel-organization.component.less'],
-    providers: [OrganizationApiService]
+    providers: [OrganizationApiService, GradeApiService]
 })
 export class PersonnelOrganizationComponent implements OnInit {
     public organizations: Organization[];
     public page: number;
     public total: number;
-    public size: 20;
+    public size = 20;
     public isLoading: boolean;
+    public filterForm: FormGroup;
+    public grades: Grade[];
 
     constructor(private bcService: XBreadCrumbService,
                 private msg: NzMessageService,
                 private organizationApi: OrganizationApiService,
-                private modalService: NzModalService) {
+                private modalService: NzModalService,
+                private fb: FormBuilder,
+                private gradeApi: GradeApiService) {
         this.organizations = [];
         this.page = 1;
+        this.grades = [];
     }
 
     ngOnInit() {
@@ -37,12 +44,30 @@ export class PersonnelOrganizationComponent implements OnInit {
                 text: '班级管理'
             }
         ]);
+        this.getGradeList();
+        this.filterFormBuild();
         this.getOrganizationList(this.page);
     }
 
-    private getOrganizationList(page: number) {
+    private filterFormBuild() {
+        this.filterForm = this.fb.group({
+            name: [],
+            gradeId: []
+        });
+    }
+
+    private getGradeList() {
+        this.gradeApi.list().subscribe(result => {
+            this.grades = result.data;
+        });
+    }
+
+    private getOrganizationList(page: number, searchData?: object) {
+        searchData = searchData || {};
+        searchData['page'] = page;
+        searchData['size'] = this.size;
         this.isLoading = true;
-        this.organizationApi.list(page, this.size).subscribe(result => {
+        this.organizationApi.list(searchData).subscribe(result => {
             this.organizations = result.data.list;
             this.total = result.data.pagination.total;
             this.page = result.data.pagination.page;
@@ -110,5 +135,13 @@ export class PersonnelOrganizationComponent implements OnInit {
                 });
             }
         });
+    }
+
+    public toSearch() {
+        const searchData = {
+            name: this.filterForm.get('name').value,
+            gradeId: this.filterForm.get('gradeId').value
+        };
+        this.getOrganizationList(1, searchData);
     }
 }

@@ -23,7 +23,7 @@ public class OrganizationServiceImplTest {
 
     @Test
     public void listByTenantId() {
-        List<OrganizationExtend> organizationExtends = organizationService.listByTenantId("1849f5ce7c634d51bae5be250a65d74f", 1, 20, null);
+        List<OrganizationExtend> organizationExtends = organizationService.listByTenantId("1849f5ce7c634d51bae5be250a65d74f", 1, 20, null, null, null);
         log.info(organizationExtends.toString());
     }
 }

@@ -1,6 +1,6 @@
 export interface Grade {
     id: number;
-    grade_id: string;
+    gradeId: string;
     name: string;
     index: number;
 }

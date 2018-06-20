@@ -1,5 +1,27 @@
 <div class="personnel-organization common-list">
-    <!--<div class="common-list-filter"></div>-->
+    <div class="common-list-filter" [formGroup]="filterForm">
+        <div class="clf-item">
+            <label class="clf-item-label">班级名称</label>
+            <div class="clf-item-control">
+                <input nz-input formControlName="name">
+            </div>
+        </div>
+        <div class="clf-item">
+            <label class="clf-item-label">年级</label>
+            <div class="clf-item-control">
+                <nz-select style="width: 200px;"
+                           nzAllowClear
+                           formControlName="gradeId">
+                    <nz-option *ngFor="let grade of grades"
+                               [nzLabel]="grade.name"
+                               [nzValue]="grade.gradeId"></nz-option>
+                </nz-select>
+            </div>
+        </div>
+        <div class="clf-btns">
+            <button nz-button [nzType]="'primary'" (click)="toSearch()">搜索</button>
+        </div>
+    </div>
     <div class="common-list-header">
         <button nz-button [nzType]="'primary'"
                 (click)="organizationCreateModalOpen()">

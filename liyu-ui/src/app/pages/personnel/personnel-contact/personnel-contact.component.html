@@ -1,5 +1,40 @@
 <div class="personnel-contact common-list">
-    <!--<div class="common-list-filter"></div>-->
+    <div class="common-list-filter" [formGroup]="filterForm">
+        <div class="clf-item">
+            <label class="clf-item-label">姓名</label>
+            <div class="clf-item-control">
+                <input nz-input formControlName="name">
+            </div>
+        </div>
+        <div class="clf-item">
+            <label class="clf-item-label">手机号</label>
+            <div class="clf-item-control">
+                <input nz-input formControlName="phone">
+            </div>
+        </div>
+        <div class="clf-item">
+            <label class="clf-item-label">班级</label>
+            <div class="clf-item-control">
+                <nz-select style="width: 200px;"
+                           nzAllowClear
+                           nzShowSearch
+                           [nzServerSearch]="true"
+                           (nzOnSearch)="organizationSearch($event)"
+                           (nzScrollToBottom)="organizationLoadMore()"
+                           formControlName="organizationId">
+                    <ng-container *ngFor="let org of organizations">
+                        <nz-option *ngIf="!isOrgLoading" [nzLabel]="org.name" [nzValue]="org.organizationId"></nz-option>
+                    </ng-container>
+                    <nz-option *ngIf="isOrgLoading" nzDisabled nzCustomContent>
+                        <i class="anticon anticon-loading anticon-spin loading-icon"></i> 加载中...
+                    </nz-option>
+                </nz-select>
+            </div>
+        </div>
+        <div class="clf-btns">
+            <button nz-button [nzType]="'primary'" (click)="toSearch()">搜索</button>
+        </div>
+    </div>
     <div class="common-list-header">
         <button nz-button [nzType]="'primary'"
                 (click)="contactCreateModalOpen()">
